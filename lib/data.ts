@@ -6,14 +6,14 @@ export type Product = {
 };
 
 const images = {
-  tomato: "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?auto=format&fit=crop&w=900&q=85",
-  greens: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=900&q=85",
-  carrot: "https://images.unsplash.com/photo-1447175008436-1701707538bb?auto=format&fit=crop&w=900&q=85",
-  herbs: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=85",
-  broccoli: "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=900&q=85",
-  pumpkin: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&w=900&q=85",
-  peppers: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=900&q=85",
-  market: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=900&q=85",
+  tomato: "https://images.pexels.com/photos/7140328/pexels-photo-7140328.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  greens: "https://images.pexels.com/photos/32560705/pexels-photo-32560705.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  carrot: "https://images.pexels.com/photos/7543101/pexels-photo-7543101.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  herbs: "https://images.pexels.com/photos/4113898/pexels-photo-4113898.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  broccoli: "https://images.pexels.com/photos/4162150/pexels-photo-4162150.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  pumpkin: "https://images.pexels.com/photos/5701945/pexels-photo-5701945.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  peppers: "https://images.pexels.com/photos/5701945/pexels-photo-5701945.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  market: "https://images.pexels.com/photos/7140328/pexels-photo-7140328.jpeg?auto=compress&cs=tinysrgb&w=1200",
 };
 
 const base: Omit<Product, "id" | "name" | "category" | "price" | "unit" | "image" | "farm" | "distance" | "badge" | "tags" | "description" | "rating" | "color"> = {};
