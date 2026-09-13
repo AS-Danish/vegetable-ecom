@@ -22,10 +22,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [activeOrder, setActiveOrder] = useState<{id:string;stage:number;address:string;slot:string;payment:string;placedAt:number}|null>(null);
   useEffect(() => {
+    let restore=0;
     try {
       const saved = sessionStorage.getItem("root-leaf-state");
-      if (saved) { const parsed = JSON.parse(saved); setCart(parsed.cart ?? {}); setFavorites(new Set(parsed.favorites ?? [])); setActiveOrder(parsed.activeOrder ?? null); }
+      if (saved) { const parsed = JSON.parse(saved); restore=window.setTimeout(()=>{setCart(parsed.cart ?? {});setFavorites(new Set(parsed.favorites ?? []));setActiveOrder(parsed.activeOrder ?? null)},0); }
     } catch {}
+    return()=>window.clearTimeout(restore);
   }, []);
   useEffect(() => { try { sessionStorage.setItem("root-leaf-state", JSON.stringify({cart,favorites:[...favorites],activeOrder})); } catch {} }, [cart,favorites,activeOrder]);
   const notify = useCallback((message:string) => {
@@ -34,7 +36,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   },[]);
   const add = useCallback((id:string) => setCart(c => ({...c,[id]:{quantity:(c[id]?.quantity ?? 0)+1,addedAt:Date.now()}})),[]);
   const setQty = useCallback((id:string, quantity:number) => setCart(c => { const next={...c}; if(quantity<=0) delete next[id]; else next[id]={...next[id],quantity}; return next; }),[]);
-  const toggleFavorite = useCallback((id:string) => setFavorites(f => { const n=new Set(f); n.has(id)?n.delete(id):n.add(id); return n; }),[]);
+  const toggleFavorite = useCallback((id:string) => setFavorites(f => { const n=new Set(f); if(n.has(id))n.delete(id);else n.add(id); return n; }),[]);
   const placeOrder = useCallback(async(details:{address:string;slot:string;payment:string})=>{ await new Promise(r=>setTimeout(r,1100)); const id=`RL-${Math.floor(1000+Math.random()*8999)}`; setActiveOrder({id,stage:0,...details,placedAt:Date.now()}); setCart({}); return id; },[]);
   const advanceOrder=useCallback(()=>setActiveOrder(o=>o?{...o,stage:Math.min(3,o.stage+1)}:o),[]);
   useEffect(()=>{

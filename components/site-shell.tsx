@@ -7,6 +7,9 @@ import { money, products } from "@/lib/data";
 import { StoreProvider, useCartTotals, useStore } from "@/lib/store";
 import { Icon } from "./icons";
 
+// Keep true while tuning the intro. Set to false to show it once per calendar day.
+const WELCOME_DEBUG = true;
+
 export function SiteShell({children}:{children:React.ReactNode}){
   return <StoreProvider><ShellChrome>{children}</ShellChrome></StoreProvider>;
 }
@@ -16,6 +19,8 @@ function ShellChrome({children}:{children:React.ReactNode}){
   const {count}=useCartTotals(); const pathname=usePathname();
   useEffect(()=>{setCartOpen(false);setSearchOpen(false)},[pathname,setCartOpen,setSearchOpen]);
   return <>
+    <WelcomeReveal/>
+    <AmbientMotion/>
     <header className="nav-wrap">
       <nav className="nav shell" aria-label="Main navigation">
         <Link href="/" className="brand" aria-label="Root and Leaf home"><span className="brand-mark">R<span>·</span>L</span><span>Root <i>&</i> Leaf</span></Link>
@@ -33,6 +38,51 @@ function ShellChrome({children}:{children:React.ReactNode}){
     {cartOpen && <CartDrawer onClose={()=>setCartOpen(false)}/>} {searchOpen && <SearchOverlay onClose={()=>setSearchOpen(false)}/>} 
     <div className="toast-stack" aria-live="polite">{toasts.map(t=><div className="toast" key={t.id}><Icon name="check" size={17}/>{t.message}<span/></div>)}</div>
   </>;
+}
+
+function WelcomeReveal(){
+  const [visible,setVisible]=useState(false);
+  useEffect(()=>{
+    if(!WELCOME_DEBUG){
+      const today=new Intl.DateTimeFormat('en-CA').format(new Date());
+      const key='root-leaf-welcome-day';
+      if(localStorage.getItem(key)===today)return;
+      localStorage.setItem(key,today);
+    }
+    const show=window.setTimeout(()=>setVisible(true),0);
+    const timer=window.setTimeout(()=>setVisible(false),3600);
+    return()=>{window.clearTimeout(show);window.clearTimeout(timer)};
+  },[]);
+  if(!visible)return null;
+  return <div className="welcome-reveal" aria-label="Welcome to Root and Leaf">
+    <div className="welcome-grain"/>
+    <p><span>THE NEIGHBOURHOOD HARVEST</span></p>
+    <div className="welcome-word"><span>ROOT</span></div>
+    <div className="welcome-word welcome-word-alt"><span>&amp; LEAF</span></div>
+    <div className="welcome-line"><i/><small>GOOD THINGS, GROWN CLOSE</small><i/></div>
+    <div className="welcome-curtain welcome-curtain-a"/><div className="welcome-curtain welcome-curtain-b"/>
+  </div>;
+}
+
+function AmbientMotion(){
+  useEffect(()=>{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    let frame=0;
+    const move=(event:PointerEvent)=>{
+      cancelAnimationFrame(frame);
+      frame=requestAnimationFrame(()=>{
+        const x=(event.clientX/window.innerWidth-.5)*2;
+        const y=(event.clientY/window.innerHeight-.5)*2;
+        document.documentElement.style.setProperty('--mouse-x',x.toFixed(3));
+        document.documentElement.style.setProperty('--mouse-y',y.toFixed(3));
+      });
+    };
+    const scroll=()=>document.documentElement.style.setProperty('--page-y',`${window.scrollY}px`);
+    window.addEventListener('pointermove',move,{passive:true});
+    window.addEventListener('scroll',scroll,{passive:true});
+    return()=>{cancelAnimationFrame(frame);window.removeEventListener('pointermove',move);window.removeEventListener('scroll',scroll)};
+  },[]);
+  return null;
 }
 
 function MobileNav({count,onSearch,onCart}:{count:number;onSearch:()=>void;onCart:()=>void}){
