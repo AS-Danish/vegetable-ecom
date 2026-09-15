@@ -17,8 +17,11 @@
 /.next/
 /out/
 
-# production
-/build
+# generated production output
+/dist/
+/.vinext/
+/.wrangler/
+/.sites-runtime/
 
 # misc
 .DS_Store
