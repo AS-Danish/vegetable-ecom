@@ -1,78 +1,645 @@
 export type Product = {
-  id: string; name: string; category: string; price: number; unit: string;
-  image: string; farm: string; distance: string; badge: string; tags: string[];
-  description: string; rating: number; color: string;
-  originalPrice?: number; offer?: string; nutrition?: string[]; storage?: string;
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  unit: string;
+  image: string;
+  farm: string;
+  distance: string;
+  badge: string;
+  tags: string[];
+  description: string;
+  rating: number;
+  color: string;
+  originalPrice?: number;
+  offer?: string;
+  nutrition?: string[];
+  storage?: string;
 };
 
-const images = {
-  tomato: "https://images.pexels.com/photos/7140328/pexels-photo-7140328.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  greens: "https://images.pexels.com/photos/32560705/pexels-photo-32560705.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  carrot: "https://images.pexels.com/photos/7543101/pexels-photo-7543101.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  herbs: "https://images.pexels.com/photos/4113898/pexels-photo-4113898.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  broccoli: "https://images.pexels.com/photos/4162150/pexels-photo-4162150.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  pumpkin: "https://images.pexels.com/photos/5701945/pexels-photo-5701945.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  peppers: "https://images.pexels.com/photos/5701945/pexels-photo-5701945.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  market: "https://images.pexels.com/photos/7140328/pexels-photo-7140328.jpeg?auto=compress&cs=tinysrgb&w=1200",
-};
+export const productList: Product[] = [
+  // --- FRESH FRUITS ---
+  {
+    id: "shimla-apples",
+    name: "Royal Gala Apples",
+    category: "Fruits",
+    price: 140,
+    originalPrice: 175,
+    offer: "20% OFF",
+    unit: "4 pcs (500g)",
+    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=compress&cs=tinysrgb&w=800",
+    farm: "Himachal Orchards",
+    distance: "Fresh Arrival",
+    badge: "CRISP & SWEET",
+    tags: ["fruits", "seasonal", "popular"],
+    description: "Naturally sweet, crunchy red apples freshly harvested from high-altitude sunny orchards.",
+    rating: 4.9,
+    color: "#fecdd3",
+    nutrition: ["Vitamin C", "Dietary Fibre", "Antioxidants"],
+    storage: "Refrigerate for lasting crunchiness. Wash well before eating."
+  },
+  {
+    id: "robusta-bananas",
+    name: "Robusta Bananas",
+    category: "Fruits",
+    price: 48,
+    originalPrice: 60,
+    offer: "Save ₹12",
+    unit: "1 kg (approx 6 pcs)",
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=compress&cs=tinysrgb&w=800",
+    farm: "Cauvery Delta",
+    distance: "12 km away",
+    badge: "TREE RIPENED",
+    tags: ["fruits", "organic", "popular"],
+    description: "Energy-rich, creamy and naturally ripened bananas free from chemical carbide treatment.",
+    rating: 4.8,
+    color: "#fef08a",
+    nutrition: ["Potassium", "Vitamin B6", "Quick Energy"],
+    storage: "Store at room temperature in a dry airy fruit bowl."
+  },
+  {
+    id: "alphonso-mango",
+    name: "Ratnagiri Alphonso Mango",
+    category: "Fruits",
+    price: 340,
+    originalPrice: 420,
+    offer: "Save ₹80",
+    unit: "6 pcs pack",
+    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=compress&cs=tinysrgb&w=800",
+    farm: "Konkan Sunshine Groves",
+    distance: "GI Tagged",
+    badge: "KING OF FRUITS",
+    tags: ["fruits", "seasonal", "exotic", "popular"],
+    description: "Rich saffron-golden velvety pulp with the legendary heavenly aroma and summer sweetness.",
+    rating: 5.0,
+    color: "#fed7aa",
+    nutrition: ["Vitamin A", "Vitamin C", "Folate"],
+    storage: "Leave at room temperature until fragrant and slightly soft, then chill."
+  },
+  {
+    id: "nagpur-oranges",
+    name: "Nagpur Sweet Oranges",
+    category: "Fruits",
+    price: 85,
+    originalPrice: 110,
+    offer: "Save ₹25",
+    unit: "1 kg (approx 5-6 pcs)",
+    image: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=compress&cs=tinysrgb&w=800",
+    farm: "Vidarbha Groves",
+    distance: "Direct Harvest",
+    badge: "JUICY & SWEET",
+    tags: ["fruits", "seasonal"],
+    description: "Packed with immune-boosting Vitamin C, easy to peel with bursts of refreshing tart-sweet juice.",
+    rating: 4.7,
+    color: "#ffedd5",
+    nutrition: ["Vitamin C", "Hydration", "Calcium"],
+    storage: "Keep in a cool spot or vegetable crisper tray."
+  },
+  {
+    id: "green-grapes",
+    name: "Green Seedless Grapes",
+    category: "Fruits",
+    price: 95,
+    originalPrice: 120,
+    offer: "20% OFF",
+    unit: "500g punnet",
+    image: "https://images.unsplash.com/photo-1596363505729-4190a9506133?auto=compress&cs=tinysrgb&w=800",
+    farm: "Nashik Valley",
+    distance: "Direct",
+    badge: "CRISP & SEEDLESS",
+    tags: ["fruits", "seasonal"],
+    description: "Plump, translucent green globes packed with snap and natural honeyed sweetness.",
+    rating: 4.8,
+    color: "#dcfce7",
+    nutrition: ["Resveratrol", "Vitamin K", "Antioxidants"],
+    storage: "Refrigerate unwashed in their breathable punnet."
+  },
+  {
+    id: "ruby-pomegranate",
+    name: "Ruby Red Pomegranate",
+    category: "Fruits",
+    price: 160,
+    originalPrice: 195,
+    offer: "Save ₹35",
+    unit: "2 large pcs (500g)",
+    image: "https://images.unsplash.com/photo-1541344999736-83eca272f6fc?auto=compress&cs=tinysrgb&w=800",
+    farm: "Solapur Sun Orchards",
+    distance: "18 km away",
+    badge: "SUPERFOOD",
+    tags: ["fruits", "organic"],
+    description: "Deep crimson, jewel-like juicy arils overflowing with heart-healthy antioxidant goodness.",
+    rating: 4.9,
+    color: "#ffe4e6",
+    nutrition: ["Iron", "Polyphenols", "Vitamin C"],
+    storage: "Whole fruit keeps for up to 2 weeks in cool dry air."
+  },
+  {
+    id: "sweet-watermelon",
+    name: "Kiran Sweet Watermelon",
+    category: "Fruits",
+    price: 79,
+    originalPrice: 99,
+    offer: "Save ₹20",
+    unit: "1 whole pc (approx 2 kg)",
+    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=compress&cs=tinysrgb&w=800",
+    farm: "Kaveri Acres",
+    distance: "8 km away",
+    badge: "SUPER COOLING",
+    tags: ["fruits", "seasonal", "popular"],
+    description: "Crisp, ruby-red interior with tiny black seeds and sweet hydrating nectar for hot afternoons.",
+    rating: 4.7,
+    color: "#fecdd3",
+    nutrition: ["92% Hydration", "Lycopene", "Citronellol"],
+    storage: "Slice and chill in airtight containers for refreshing snacking."
+  },
+  {
+    id: "ripe-papaya",
+    name: "Taiwan Red Lady Papaya",
+    category: "Fruits",
+    price: 58,
+    originalPrice: 75,
+    offer: "Save ₹17",
+    unit: "1 pc (approx 1 kg)",
+    image: "https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?auto=compress&cs=tinysrgb&w=800",
+    farm: "Sundar Fields",
+    distance: "15 km away",
+    badge: "GUT HEALTH",
+    tags: ["fruits", "organic"],
+    description: "Silky soft, salmon-orange flesh with rich sweetness and gentle digestive enzymes.",
+    rating: 4.8,
+    color: "#fed7aa",
+    nutrition: ["Papain Enzyme", "Beta Carotene", "Fibre"],
+    storage: "Once soft to the touch, cut and refrigerate."
+  },
+  {
+    id: "sweet-strawberries",
+    name: "Mahabaleshwar Strawberries",
+    category: "Fruits",
+    price: 135,
+    originalPrice: 170,
+    offer: "Save ₹35",
+    unit: "1 box (200g)",
+    image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=compress&cs=tinysrgb&w=800",
+    farm: "Highland Berry Farm",
+    distance: "Cold Chain",
+    badge: "EXTRA SWEET",
+    tags: ["fruits", "exotic", "seasonal"],
+    description: "Fragrant, scarlet berries hand-picked at dawn from cool hill slopes. Delightfully sweet.",
+    rating: 4.9,
+    color: "#ffe4e6",
+    nutrition: ["Vitamin C", "Manganese", "Folate"],
+    storage: "Keep chilled in the box and rinse lightly just before serving."
+  },
+  {
+    id: "tender-coconut",
+    name: "Fresh Tender Coconut",
+    category: "Fruits",
+    price: 55,
+    originalPrice: 65,
+    offer: "Save ₹10",
+    unit: "1 pc (approx 300ml water)",
+    image: "https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=compress&cs=tinysrgb&w=800",
+    farm: "Mandya Palms",
+    distance: "14 km away",
+    badge: "100% PURE WATER",
+    tags: ["fruits", "organic", "popular"],
+    description: "Naturally sweet, chilled pure electrolyte water with delicate soft coconut malai.",
+    rating: 4.9,
+    color: "#e2e8f0",
+    nutrition: ["Natural Electrolytes", "Potassium", "Zero Sugar Added"],
+    storage: "Keep in a cool shaded room. Best opened fresh."
+  },
 
-const base: Omit<Product, "id" | "name" | "category" | "price" | "unit" | "image" | "farm" | "distance" | "badge" | "tags" | "description" | "rating" | "color"> = {};
-
-const productRows = [
-  ["heirloom-tomatoes","Heirloom tomatoes","Seasonal",180,"500g",images.tomato,"Kaveri Acres","8 km","picked at dawn",["seasonal"],"Juicy, sun-warmed tomatoes with a bright, old-fashioned sweetness.",4.9,"#f0b29d"],
-  ["baby-spinach","Baby spinach","Leafy greens",68,"200g",images.greens,"Patel Farms","12 km","harvested today",["organic"],"Tender young leaves, triple washed and ready for salads.",4.8,"#b9cfad"],
-  ["rainbow-carrots","Rainbow carrots","Roots",95,"500g",images.carrot,"Mitti Collective","18 km","soil to shelf",["organic","seasonal"],"Sweet, crisp roots with their feathery tops still on.",4.9,"#e7bd72"],
-  ["sweet-basil","Sweet basil","Herbs",45,"bunch",images.herbs,"Urban Leaf Co.","5 km","cut this morning",["organic"],"Aromatic, soft-leaf basil for pesto, pasta and salads.",4.7,"#9fc48d"],
-  ["tender-broccoli","Tenderstem broccoli","Exotic",145,"300g",images.broccoli,"Nilgiri Gardens","24 km","crisp & young",["exotic"],"Sweet stems and delicate florets that need barely any cooking.",4.8,"#9eb791"],
-  ["red-pumpkin","Red pumpkin","Roots",78,"1 kg",images.pumpkin,"Sundar Fields","15 km","vine ripened",["seasonal"],"Dense golden flesh for silky curries, roasts and soups.",4.6,"#e5a467"],
-  ["sweet-peppers","Sweet peppers","Exotic",165,"400g",images.peppers,"Glasshouse 22","21 km","colour picked",["exotic"],"A bright trio of crunchy, naturally sweet peppers.",4.8,"#e3a857"],
-  ["garden-cucumber","Garden cucumber","Seasonal",52,"500g",images.market,"Kaveri Acres","8 km","extra crisp",["seasonal"],"Cool, clean and snappy — perfect for quick summer salads.",4.5,"#bad4a3"],
-  ["coriander","Coriander","Herbs",24,"bunch",images.herbs,"Urban Leaf Co.","5 km","cut this morning",["organic"],"Fragrant leaves and tender stems, bundled without plastic.",4.8,"#a8c694"],
-  ["beetroot","Earthy beetroot","Roots",72,"500g",images.carrot,"Mitti Collective","18 km","soil to shelf",["organic"],"Deep ruby roots with a clean, earthy sweetness.",4.7,"#c68183"],
-  ["romaine","Romaine hearts","Leafy greens",88,"2 heads",images.greens,"Patel Farms","12 km","harvested today",["organic"],"Crunchy centres made for generous Caesar salads.",4.8,"#b5ca91"],
-  ["cherry-tomatoes","Cherry tomatoes","Seasonal",105,"250g",images.tomato,"Kaveri Acres","8 km","picked at dawn",["seasonal"],"Little bursts of honeyed acidity, lovely straight from the punnet.",4.9,"#e89a78"],
-  ["green-chilli","Green chilli","Herbs",28,"100g",images.peppers,"Sundar Fields","15 km","bright heat",["seasonal"],"Clean, lively heat with a grassy finish.",4.6,"#94b378"],
-  ["zucchini","Tender zucchini","Exotic",120,"500g",images.market,"Glasshouse 22","21 km","small batch",["exotic"],"Young and silky with a delicate flavour.",4.7,"#aabb7f"],
-  ["spring-onion","Spring onion","Herbs",42,"bunch",images.herbs,"Urban Leaf Co.","5 km","cut this morning",["organic"],"Peppery green tops with crisp, sweet bulbs.",4.7,"#a6bf8d"],
-  ["cauliflower","Cloud cauliflower","Seasonal",84,"1 head",images.broccoli,"Patel Farms","12 km","field fresh",["seasonal"],"Tight, creamy florets with a pleasantly nutty bite.",4.6,"#ded9c2"],
+  // --- FRESH VEGETABLES ---
+  {
+    id: "heirloom-tomatoes",
+    name: "Farm Fresh Tomatoes",
+    category: "Seasonal",
+    price: 42,
+    originalPrice: 55,
+    offer: "Save ₹13",
+    unit: "1 kg",
+    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=compress&cs=tinysrgb&w=800",
+    farm: "Kaveri Acres",
+    distance: "8 km away",
+    badge: "PICKED TODAY",
+    tags: ["vegetables", "seasonal", "popular"],
+    description: "Plump, sun-ripened local tomatoes with balanced acidity, juicy pulp and bright red skin.",
+    rating: 4.9,
+    color: "#fecdd3",
+    nutrition: ["Vitamin C", "Lycopene", "Potassium"],
+    storage: "Store at room temperature away from direct sun."
+  },
+  {
+    id: "baby-spinach",
+    name: "Fresh Palak / Spinach",
+    category: "Leafy greens",
+    price: 35,
+    originalPrice: 48,
+    offer: "Save ₹13",
+    unit: "1 bunch (250g)",
+    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=compress&cs=tinysrgb&w=800",
+    farm: "Patel Organic Farms",
+    distance: "12 km away",
+    badge: "HYDRO WASHED",
+    tags: ["vegetables", "leafy-greens", "organic", "popular"],
+    description: "Tender, vibrant green leaves with sweet succulent stems. Pre-sorted and dirt-free.",
+    rating: 4.8,
+    color: "#bbf7d0",
+    nutrition: ["Iron", "Folate", "Vitamin K"],
+    storage: "Refrigerate in breathable paper wrap and use within 3 days."
+  },
+  {
+    id: "rainbow-carrots",
+    name: "Fresh Sweet Carrots",
+    category: "Roots",
+    price: 45,
+    originalPrice: 60,
+    offer: "Save ₹15",
+    unit: "500g",
+    image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5c317?auto=compress&cs=tinysrgb&w=800",
+    farm: "Mitti Collective",
+    distance: "18 km away",
+    badge: "SOIL FRESH",
+    tags: ["vegetables", "roots", "organic"],
+    description: "Sweet, crunchy orange roots packed with beta-carotene. Feathery tops still fresh.",
+    rating: 4.9,
+    color: "#fed7aa",
+    nutrition: ["Beta-Carotene", "Fibre", "Vitamin A"],
+    storage: "Trim greens and store in the vegetable crisper."
+  },
+  {
+    id: "fresh-potatoes",
+    name: "Pahadi Gold Potatoes",
+    category: "Roots",
+    price: 38,
+    originalPrice: 48,
+    offer: "Save ₹10",
+    unit: "1 kg",
+    image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=compress&cs=tinysrgb&w=800",
+    farm: "Mitti Collective",
+    distance: "18 km away",
+    badge: "DAILY ESSENTIAL",
+    tags: ["vegetables", "roots", "popular"],
+    description: "Thin-skinned, buttery golden potatoes ideal for daily curries, roasting, and chips.",
+    rating: 4.8,
+    color: "#fef3c7",
+    nutrition: ["Carbohydrates", "Vitamin B6", "Potassium"],
+    storage: "Keep in a dark, dry, ventilated basket."
+  },
+  {
+    id: "red-onions",
+    name: "Fresh Red Onions",
+    category: "Roots",
+    price: 36,
+    originalPrice: 45,
+    offer: "Save ₹9",
+    unit: "1 kg",
+    image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=compress&cs=tinysrgb&w=800",
+    farm: "Sundar Fields",
+    distance: "15 km away",
+    badge: "DAILY ESSENTIAL",
+    tags: ["vegetables", "roots", "popular"],
+    description: "Crisp, pungent red onions with tight ruby layers. The heart of Indian home cooking.",
+    rating: 4.8,
+    color: "#fae8ff",
+    nutrition: ["Quercetin", "Chromium", "Fibre"],
+    storage: "Store dry in a cool basket, never in plastic."
+  },
+  {
+    id: "tender-broccoli",
+    name: "Crisp Green Broccoli",
+    category: "Exotic",
+    price: 88,
+    originalPrice: 110,
+    offer: "20% OFF",
+    unit: "1 head (350-400g)",
+    image: "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=compress&cs=tinysrgb&w=800",
+    farm: "Nilgiri Cool Gardens",
+    distance: "24 km away",
+    badge: "HIGH PROTEIN",
+    tags: ["vegetables", "exotic", "organic"],
+    description: "Dense emerald florets with crunchy sweet stems. High antioxidant and protein content.",
+    rating: 4.8,
+    color: "#bbf7d0",
+    nutrition: ["Protein", "Sulforaphane", "Vitamin C"],
+    storage: "Refrigerate unwashed in a loose wrapper."
+  },
+  {
+    id: "sweet-peppers",
+    name: "Fresh Sweet Capsicum",
+    category: "Exotic",
+    price: 65,
+    originalPrice: 85,
+    offer: "Save ₹20",
+    unit: "500g",
+    image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=compress&cs=tinysrgb&w=800",
+    farm: "Glasshouse 22",
+    distance: "21 km away",
+    badge: "EXTRA CRUNCHY",
+    tags: ["vegetables", "exotic"],
+    description: "Glossy bell peppers with thick juicy walls and natural mild sweetness.",
+    rating: 4.8,
+    color: "#fef08a",
+    nutrition: ["Vitamin A", "Vitamin C", "Fibre"],
+    storage: "Keep dry in the crisper drawer."
+  },
+  {
+    id: "garden-cucumber",
+    name: "Crunchy Green Cucumber",
+    category: "Seasonal",
+    price: 32,
+    originalPrice: 42,
+    offer: "Save ₹10",
+    unit: "500g",
+    image: "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?auto=compress&cs=tinysrgb&w=800",
+    farm: "Kaveri Acres",
+    distance: "8 km away",
+    badge: "SUPER HYDRATING",
+    tags: ["vegetables", "seasonal", "popular"],
+    description: "Snappy, cool and seed-free garden cucumbers perfect for crunchy salads and raita.",
+    rating: 4.6,
+    color: "#dcfce7",
+    nutrition: ["95% Water", "Hydration", "Vitamin K"],
+    storage: "Store in a cool dry area or crisper."
+  },
+  {
+    id: "coriander",
+    name: "Fresh Green Coriander / Dhaniya",
+    category: "Herbs",
+    price: 18,
+    originalPrice: 25,
+    offer: "Save ₹7",
+    unit: "1 bunch (100g)",
+    image: "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=compress&cs=tinysrgb&w=800",
+    farm: "Urban Leaf Co.",
+    distance: "5 km away",
+    badge: "MORNING HARVEST",
+    tags: ["vegetables", "herbs", "organic", "popular"],
+    description: "Deeply aromatic leaves and tender green stems tied with natural jute string.",
+    rating: 4.9,
+    color: "#bbf7d0",
+    nutrition: ["Antioxidants", "Chlorophyll", "Vitamin A"],
+    storage: "Stand stems in a glass of cold water or wrap in damp cotton cloth."
+  },
+  {
+    id: "green-chilli",
+    name: "Spicy Green Chillies",
+    category: "Herbs",
+    price: 20,
+    originalPrice: 28,
+    offer: "Save ₹8",
+    unit: "100g",
+    image: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=compress&cs=tinysrgb&w=800",
+    farm: "Sundar Fields",
+    distance: "15 km away",
+    badge: "EXTRA PUNCHY",
+    tags: ["vegetables", "herbs", "seasonal"],
+    description: "Clean, snappy chillies with vibrant grassy heat and zero pesticide residue.",
+    rating: 4.7,
+    color: "#dcfce7",
+    nutrition: ["Capsaicin", "Metabolism Boost", "Vitamin C"],
+    storage: "Remove stems and store in a dry glass jar."
+  },
+  {
+    id: "sweet-basil",
+    name: "Aromatic Sweet Basil",
+    category: "Herbs",
+    price: 35,
+    originalPrice: 45,
+    offer: "Save ₹10",
+    unit: "50g bunch",
+    image: "https://images.unsplash.com/photo-1608686207856-001b95cf60ca?auto=compress&cs=tinysrgb&w=800",
+    farm: "Urban Leaf Co.",
+    distance: "5 km away",
+    badge: "PESTO READY",
+    tags: ["vegetables", "herbs", "organic"],
+    description: "Fragrant broad Italian basil leaves with sweet clove-like perfume. Ideal for pastas.",
+    rating: 4.8,
+    color: "#bbf7d0",
+    nutrition: ["Eugenol", "Magnesium", "Flavonoids"],
+    storage: "Keep at room temperature with stem bases in water."
+  },
+  {
+    id: "red-pumpkin",
+    name: "Sweet Red Pumpkin",
+    category: "Roots",
+    price: 45,
+    originalPrice: 60,
+    offer: "Save ₹15",
+    unit: "500g cut",
+    image: "https://images.unsplash.com/photo-1506917728037-b6fb01c42857?auto=compress&cs=tinysrgb&w=800",
+    farm: "Sundar Fields",
+    distance: "15 km away",
+    badge: "VINE RIPENED",
+    tags: ["vegetables", "roots"],
+    description: "Dense, golden-orange flesh that cooks down into silky sambar, curries and soups.",
+    rating: 4.7,
+    color: "#fed7aa",
+    nutrition: ["Beta-Carotene", "Vitamin A", "Digestive Fibre"],
+    storage: "Refrigerate after cutting."
+  },
+  {
+    id: "beetroot",
+    name: "Earthy Red Beetroot",
+    category: "Roots",
+    price: 38,
+    originalPrice: 50,
+    offer: "Save ₹12",
+    unit: "500g",
+    image: "https://images.unsplash.com/photo-1526346698789-22fd84314424?auto=compress&cs=tinysrgb&w=800",
+    farm: "Mitti Collective",
+    distance: "18 km away",
+    badge: "ORGANIC",
+    tags: ["vegetables", "roots", "organic"],
+    description: "Firm, rich ruby roots with earthy sweetness and natural blood-purifying properties.",
+    rating: 4.7,
+    color: "#fecdd3",
+    nutrition: ["Nitrates", "Iron", "Folate"],
+    storage: "Cut tops and store dry in the crisper."
+  },
+  {
+    id: "romaine",
+    name: "Crisp Romaine Hearts",
+    category: "Leafy greens",
+    price: 65,
+    originalPrice: 85,
+    offer: "Save ₹20",
+    unit: "2 heads",
+    image: "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?auto=compress&cs=tinysrgb&w=800",
+    farm: "Patel Farms",
+    distance: "12 km away",
+    badge: "SUPER CRUNCH",
+    tags: ["vegetables", "leafy-greens", "organic"],
+    description: "Crunchy central leaves ready for quick Caesars, fresh wraps, and crunchy salads.",
+    rating: 4.8,
+    color: "#dcfce7",
+    nutrition: ["Lactucarium", "Vitamin A", "Moisture"],
+    storage: "Refrigerate wrapped in paper towel."
+  },
+  {
+    id: "cherry-tomatoes",
+    name: "Sweet Cherry Tomatoes",
+    category: "Seasonal",
+    price: 65,
+    originalPrice: 85,
+    offer: "Save ₹20",
+    unit: "250g punnet",
+    image: "https://images.unsplash.com/photo-1546470427-e26264be0b11?auto=compress&cs=tinysrgb&w=800",
+    farm: "Kaveri Acres",
+    distance: "8 km away",
+    badge: "BITE SIZED",
+    tags: ["vegetables", "seasonal", "popular"],
+    description: "Juicy little bursts of honeyed sweetness. Snack directly or toss with olive oil.",
+    rating: 4.9,
+    color: "#fecdd3",
+    nutrition: ["Lycopene", "Vitamin C", "Fibre"],
+    storage: "Keep at room temperature for the best aroma and sweetness."
+  },
+  {
+    id: "cauliflower",
+    name: "Cloud White Cauliflower",
+    category: "Seasonal",
+    price: 46,
+    originalPrice: 60,
+    offer: "Save ₹14",
+    unit: "1 pc (approx 600g)",
+    image: "https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?auto=compress&cs=tinysrgb&w=800",
+    farm: "Patel Farms",
+    distance: "12 km away",
+    badge: "SNOW WHITE",
+    tags: ["vegetables", "seasonal"],
+    description: "Tight, creamy white florets with sweet nutty flavor. Protected from worms naturally.",
+    rating: 4.7,
+    color: "#f1f5f9",
+    nutrition: ["Choline", "Vitamin C", "Antioxidants"],
+    storage: "Keep cold in the vegetable basket."
+  },
+  {
+    id: "zucchini",
+    name: "Tender Green Zucchini",
+    category: "Exotic",
+    price: 75,
+    originalPrice: 95,
+    offer: "Save ₹20",
+    unit: "500g",
+    image: "https://images.unsplash.com/photo-1590165482129-1b8b27698780?auto=compress&cs=tinysrgb&w=800",
+    farm: "Glasshouse 22",
+    distance: "21 km away",
+    badge: "ORGANIC BATCH",
+    tags: ["vegetables", "exotic"],
+    description: "Silky, delicate young green zucchini. Slices smoothly for stir-fries and pasta.",
+    rating: 4.7,
+    color: "#bbf7d0",
+    nutrition: ["Low Calorie", "Vitamin B6", "Potassium"],
+    storage: "Refrigerate unwashed in vegetable box."
+  },
+  {
+    id: "spring-onion",
+    name: "Crisp Spring Onions",
+    category: "Herbs",
+    price: 28,
+    originalPrice: 38,
+    offer: "Save ₹10",
+    unit: "1 bunch (150g)",
+    image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=compress&cs=tinysrgb&w=800",
+    farm: "Urban Leaf Co.",
+    distance: "5 km away",
+    badge: "FIELD FRESH",
+    tags: ["vegetables", "herbs"],
+    description: "Mild sweet white bulbs with tender, peppery green stems for curries and noodles.",
+    rating: 4.7,
+    color: "#dcfce7",
+    nutrition: ["Allicin", "Vitamin K", "Immunity"],
+    storage: "Stand in water or wrap in wet towel in fridge."
+  }
 ];
 
-const extras: Record<string, Partial<Product>> = {
-  "heirloom-tomatoes": { originalPrice: 225, offer: "20% off", nutrition: ["Vitamin C", "Lycopene", "Potassium"], storage: "Keep at room temperature and away from direct sun." },
-  "baby-spinach": { originalPrice: 85, offer: "20% off", nutrition: ["Iron", "Folate", "Vitamin K"], storage: "Refrigerate in its paper wrap and use within 3 days." },
-  "rainbow-carrots": { originalPrice: 120, offer: "15% off", nutrition: ["Beta-carotene", "Fibre", "Vitamin A"], storage: "Remove leafy tops and refrigerate in a loose paper bag." },
-  "sweet-peppers": { originalPrice: 195, offer: "Save ₹30", nutrition: ["Vitamin C", "Vitamin B6", "Antioxidants"] },
-  "romaine": { originalPrice: 105, offer: "Today only" },
-  "cherry-tomatoes": { originalPrice: 125, offer: "Farm special" },
-};
-
-export const products: Product[] = productRows.map((p) => {
-  const [id,name,category,price,unit,image,farm,distance,badge,tags,description,rating,color] = p as [string,string,string,number,string,string,string,string,string,string[],string,number,string];
-  return {...base,id,name,category,price,unit,image,farm,distance,badge,tags,description,rating,color,...extras[id]};
-});
+export const products: Product[] = productList;
 
 export const promoCodes = [
-  { code: "FIRSTLEAF", label: "15% off your first basket", min: 399, percent: 15 },
+  { code: "FIRSTLEAF", label: "15% off your first basket", min: 299, percent: 15 },
+  { code: "FRESH50", label: "₹50 flat discount above ₹499", min: 499, flat: 50 },
   { code: "FARMDAY", label: "₹75 off above ₹699", min: 699, flat: 75 },
 ];
 
-export const categories = [
-  { name: "Leafy greens", slug: "leafy-greens", glyph: "⌇", blurb: "Soft leaves & crisp hearts" },
-  { name: "Roots", slug: "roots", glyph: "♢", blurb: "Pulled from rich soil" },
-  { name: "Herbs", slug: "herbs", glyph: "⌁", blurb: "Cut fragrant & fresh" },
-  { name: "Exotic", slug: "exotic", glyph: "✣", blurb: "A little less ordinary" },
-  { name: "Organic only", slug: "organic", glyph: "◌", blurb: "Grown gently" },
-  { name: "Seasonal", slug: "seasonal", glyph: "☼", blurb: "At its best right now" },
+export type CategoryMeta = {
+  name: string;
+  slug: string;
+  icon: string;
+  glyph: string;
+  blurb: string;
+  image: string;
+};
+
+export const categories: CategoryMeta[] = [
+  {
+    name: "All Items",
+    slug: "all",
+    icon: "✨",
+    glyph: "✨",
+    blurb: "Everything fresh today",
+    image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    name: "Fresh Fruits",
+    slug: "fruits",
+    icon: "🍎",
+    glyph: "🍎",
+    blurb: "Sweet, juicy & tree-ripened",
+    image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    name: "Leafy Greens",
+    slug: "leafy-greens",
+    icon: "🥬",
+    glyph: "🥬",
+    blurb: "Crisp palak, methi & herbs",
+    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    name: "Roots & Potatoes",
+    slug: "roots",
+    icon: "🥕",
+    glyph: "🥕",
+    blurb: "Carrots, onions & potatoes",
+    image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5c317?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    name: "Herbs & Chillies",
+    slug: "herbs",
+    icon: "🌿",
+    glyph: "🌿",
+    blurb: "Coriander, chillies & basil",
+    image: "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    name: "Exotics & Organic",
+    slug: "exotic",
+    icon: "🥑",
+    glyph: "🥑",
+    blurb: "Broccoli, zucchini & peppers",
+    image: "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=compress&cs=tinysrgb&w=400"
+  },
+  {
+    name: "Seasonal Specials",
+    slug: "seasonal",
+    icon: "🥭",
+    glyph: "🥭",
+    blurb: "At its peak sweetness right now",
+    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=compress&cs=tinysrgb&w=400"
+  }
 ];
 
 export const addresses = [
   { id: "home", label: "Home", text: "14, Banyan Lane, Indiranagar, Bengaluru 560038" },
-  { id: "studio", label: "Studio", text: "62, Museum Road, Ashok Nagar, Bengaluru 560001" },
+  { id: "studio", label: "Office", text: "62, Museum Road, Ashok Nagar, Bengaluru 560001" },
 ];
 
 export const pastOrders = [
-  { id: "RL-4821", date: "06 Sep", total: 524, items: ["baby-spinach","rainbow-carrots","sweet-basil"] },
-  { id: "RL-4618", date: "27 Aug", total: 386, items: ["heirloom-tomatoes","garden-cucumber","coriander"] },
+  { id: "RL-4821", date: "Yesterday", total: 328, items: ["shimla-apples", "baby-spinach", "heirloom-tomatoes"] },
+  { id: "RL-4618", date: "3 days ago", total: 245, items: ["robusta-bananas", "garden-cucumber", "coriander"] },
 ];
 
 export const money = (value: number) => `₹${value.toLocaleString("en-IN")}`;

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { addresses, categories, money, pastOrders, products, promoCodes } from "@/lib/data";
 import { useCartTotals, useStore } from "@/lib/store";
@@ -8,53 +8,1145 @@ import { Footer, QuantityStepper } from "./site-shell";
 import { Icon } from "./icons";
 import { ProductCard } from "./product-card";
 
-const Reveal=({children,className=""}:{children:React.ReactNode;className?:string})=>{const ref=useRef<HTMLDivElement>(null);const [shown,setShown]=useState(false);useEffect(()=>{const el=ref.current;if(!el)return;const observer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){setShown(true);observer.disconnect()}},{threshold:.08});observer.observe(el);return()=>observer.disconnect()},[]);return <div ref={ref} className={`reveal ${shown?'is-visible':''} ${className}`}>{children}</div>};
+export function HomeView() {
+  const { cart } = useStore();
+  const history = Object.keys(cart).length > 0 || pastOrders.length > 0;
 
-function ProductCarousel({children,label="Products"}:{children:React.ReactNode;label?:string}){
- const rail=useRef<HTMLDivElement>(null);const [start,setStart]=useState(true);const [end,setEnd]=useState(false);
- const sync=()=>{const el=rail.current;if(!el)return;setStart(el.scrollLeft<8);setEnd(el.scrollLeft+el.clientWidth>=el.scrollWidth-8)};
- const move=(direction:-1|1)=>{const el=rail.current;if(el)el.scrollBy({left:direction*el.clientWidth*.78,behavior:'smooth'})};
- useEffect(()=>{sync();const el=rail.current;if(!el)return;const observer=new ResizeObserver(sync);observer.observe(el);return()=>observer.disconnect()},[]);
- return <div className="carousel-shell" aria-label={label}><div ref={rail} className="product-scroll" onScroll={sync}>{children}</div><div className="carousel-controls"><button onClick={()=>move(-1)} disabled={start} aria-label="Show previous products">←</button><span>Browse products</span><button onClick={()=>move(1)} disabled={end} aria-label="Show more products">→</button></div></div>
+  const fruitItems = useMemo(
+    () => products.filter((p) => p.category === "Fruits" || p.tags.includes("fruits")),
+    []
+  );
+
+  const veggieItems = useMemo(
+    () => products.filter((p) => p.category !== "Fruits"),
+    []
+  );
+
+  const popularItems = useMemo(
+    () => products.filter((p) => p.tags.includes("popular")).slice(0, 8),
+    []
+  );
+
+  return (
+    <>
+      {/* Modern Hero Promo Banner */}
+      <section className="hero-section shell">
+        <div className="hero-banner-card">
+          <div className="hero-banner-content">
+            <div className="hero-pill-badge">
+              <Icon name="spark" size={15} />
+              <span>15 MINS EXPRESS DELIVERY · INDIRANAGAR</span>
+            </div>
+            <h1 className="hero-heading">
+              Farm Fresh <span>Fruits & Veggies</span> At Your Doorstep.
+            </h1>
+            <p className="hero-subtext">
+              Handpicked at dawn from local partner orchards and farms. 100% natural, hygienic, and plastic-free packaging.
+            </p>
+            <div className="hero-cta-group">
+              <Link href="/shop/fruits" className="hero-btn-primary">
+                <span>Shop Fresh Fruits 🍎</span>
+                <Icon name="arrow" size={16} />
+              </Link>
+              <Link href="/shop" className="hero-btn-secondary">
+                <span>Explore All Veggies 🥦</span>
+              </Link>
+            </div>
+          </div>
+          <div className="hero-visual-graphic">
+            <div className="hero-img-stack">
+              <img
+                src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=compress&cs=tinysrgb&w=800"
+                alt="Fresh produce basket"
+                className="hero-main-img"
+              />
+              <div className="floating-stat-badge">
+                <span className="stat-emoji">⚡</span>
+                <div>
+                  <strong>15 Mins</strong>
+                  <small>Average Delivery</small>
+                </div>
+              </div>
+              <div className="floating-stat-badge badge-discount">
+                <span className="stat-emoji">🏷️</span>
+                <div>
+                  <strong>Up to 25% OFF</strong>
+                  <small>On Daily Harvest</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Category Grid (Accessible for all users with large icons & photos) */}
+      <section className="section shell category-overview-section">
+        <div className="section-title-row">
+          <div>
+            <span className="section-eyebrow">Explore Categories</span>
+            <h2 className="section-heading">Shop By Category</h2>
+          </div>
+          <Link href="/shop" className="view-all-link">
+            <span>View All</span>
+            <Icon name="arrow" size={15} />
+          </Link>
+        </div>
+
+        <div className="category-card-grid">
+          {categories.filter((c) => c.slug !== "all").map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/shop/${cat.slug}`}
+              className="visual-category-card"
+            >
+              <div className="cat-img-wrapper">
+                <img src={cat.image} alt={cat.name} loading="lazy" />
+                <span className="cat-emoji-badge">{cat.icon}</span>
+              </div>
+              <strong className="cat-name">{cat.name}</strong>
+              <small className="cat-sub">{cat.blurb}</small>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Fresh Fruits Section (New core feature requested) */}
+      <section className="section shell fresh-fruits-showcase">
+        <div className="section-title-row">
+          <div>
+            <span className="section-eyebrow font-accent">Farm Harvest</span>
+            <h2 className="section-heading">Fresh Fruits Today 🍎</h2>
+          </div>
+          <Link href="/shop/fruits" className="view-all-link">
+            <span>See All Fruits</span>
+            <Icon name="arrow" size={15} />
+          </Link>
+        </div>
+
+        <div className="products-horizontal-grid">
+          {fruitItems.slice(0, 8).map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))}
+        </div>
+      </section>
+
+      {/* Weekend Offer Highlight Banner */}
+      <section className="shell promo-banner-section">
+        <div className="market-deal-card">
+          <div className="deal-info">
+            <span className="deal-pill">SUPER SAVER DEAL</span>
+            <h2>Get Flat ₹75 Off On Your Basket</h2>
+            <p>
+              Use code <b className="promo-highlight">FARMDAY</b> on orders above ₹699. Valid on all fruits, greens, and veggies!
+            </p>
+            <Link href="/shop" className="deal-action-btn">
+              <span>Shop Now & Save</span>
+              <Icon name="arrow" size={16} />
+            </Link>
+          </div>
+          <div className="deal-visual">
+            <span className="deal-tag-big">₹75 OFF</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Daily Fresh Vegetables Section */}
+      <section className="section shell fresh-veggies-showcase">
+        <div className="section-title-row">
+          <div>
+            <span className="section-eyebrow">Local Greens & Roots</span>
+            <h2 className="section-heading">Daily Fresh Vegetables 🥦</h2>
+          </div>
+          <Link href="/shop" className="view-all-link">
+            <span>See All Veggies</span>
+            <Icon name="arrow" size={15} />
+          </Link>
+        </div>
+
+        <div className="products-horizontal-grid">
+          {veggieItems.slice(0, 8).map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))}
+        </div>
+      </section>
+
+      {/* Popular Essentials */}
+      <section className="section shell popular-essentials-showcase">
+        <div className="section-title-row">
+          <div>
+            <span className="section-eyebrow">Most Loved</span>
+            <h2 className="section-heading">Kitchen Essentials & Bestsellers ⭐</h2>
+          </div>
+          <Link href="/shop" className="view-all-link">
+            <span>Shop Bestsellers</span>
+            <Icon name="arrow" size={15} />
+          </Link>
+        </div>
+
+        <div className="products-horizontal-grid">
+          {popularItems.map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))}
+        </div>
+      </section>
+
+      {/* Previous Orders Quick Reorder */}
+      {history && (
+        <section className="section shell buy-again-section">
+          <div className="section-title-row">
+            <div>
+              <span className="section-eyebrow">Quick Repeat</span>
+              <h2 className="section-heading">Buy Again 🔄</h2>
+            </div>
+          </div>
+          <div className="quick-reorder-grid">
+            {products.slice(0, 4).map((p) => (
+              <MiniProductCard key={p.id} id={p.id} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Visual Trust Assurances (Clear icons for low literacy) */}
+      <section className="shell assurances-section">
+        <div className="assurances-grid">
+          <div className="assurance-box">
+            <span className="assure-icon">⚡</span>
+            <strong>15-Minute Delivery</strong>
+            <p>Fastest drop from local dark stores directly to your kitchen.</p>
+          </div>
+          <div className="assurance-box">
+            <span className="assure-icon">🌱</span>
+            <strong>100% Chemical-Free</strong>
+            <p>Zero carbide ripening, naturally harvested and hygienic.</p>
+          </div>
+          <div className="assurance-box">
+            <span className="assure-icon">💵</span>
+            <strong>Cash on Delivery</strong>
+            <p>Pay cash or UPI comfortably at your doorstep upon delivery.</p>
+          </div>
+          <div className="assurance-box">
+            <span className="assure-icon">👍</span>
+            <strong>No Questions Replacement</strong>
+            <p>Not satisfied with quality? Instant refund or replacement.</p>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </>
+  );
 }
 
-export function HomeView(){
- const {cart}=useStore(); const history=Object.keys(cart).length>0||pastOrders.length>0;
- return <><div className="promo-ticker"><div><span>Free delivery above ₹499</span><i>✦</i><span>15% off your first order — FIRSTLEAF</span><i>✦</i><span>Picked nearby, delivered today</span><i>✦</i><span>Free delivery above ₹499</span><i>✦</i><span>15% off your first order — FIRSTLEAF</span><i>✦</i><span>Picked nearby, delivered today</span></div></div><section className="hero hero-max shell"><div className="hero-image"><div className="hero-backword" aria-hidden="true">FRESH</div><div className="hero-copy"><span className="hero-kicker">Bengaluru’s daily vegetable drop <b>●</b></span><h1 aria-label="Eat the season"><span className="hero-word hero-word-eat">EAT</span><span className="hero-word hero-word-the">THE</span><span className="hero-word hero-word-season">SEASON</span></h1><div className="hero-bottom"><p>Peak-season vegetables from small nearby farms, picked this morning and delivered today.</p><div className="hero-actions"><Link href="/shop" className="hero-cta">Shop the drop <Icon name="arrow"/></Link><span><b>12 KM</b><small>average food mile</small></span></div></div></div><div className="produce-stage" aria-hidden="true"><div className="produce-frame"><img src="https://images.pexels.com/photos/5677720/pexels-photo-5677720.jpeg?auto=compress&cs=tinysrgb&w=1400" alt=""/></div><span className="produce-label label-picked">PICKED<br/><b>06:10</b></span><span className="produce-label label-local">LOCAL<br/>ONLY</span><span className="hero-scribble">✦</span></div><div className="hero-sidecopy" aria-hidden="true"><span>01</span><b>CRISP / BRIGHT / CLOSE</b></div><span className="hero-note">Grown close<br/>Tastes louder</span></div><button className="floating-search" onClick={()=>document.querySelector<HTMLButtonElement>('.nav-search')?.click()}><Icon name="search" size={24}/><span>What are you cooking?</span><kbd>⌘ K</kbd></button></section>
- <Reveal className="section shell"><div className="section-head"><div><span className="eyebrow">Browse our range</span><h2>Shop by category</h2></div><Link href="/shop">View all products <Icon name="arrow"/></Link></div><div className="category-rail">{categories.map(c=><Link href={`/shop/${c.slug}`} className="category-pill" key={c.slug}><span>{c.glyph}</span><div><strong>{c.name}</strong><small>{c.blurb}</small></div></Link>)}</div></Reveal>
- <Reveal className="deal-banner shell"><div className="deal-copy"><span className="eyebrow light-text">Weekend market offer</span><h2>Save ₹75 on<br/><em>your order.</em></h2><p>Use <b>FARMDAY</b> on orders above ₹699. Ends Sunday at midnight.</p><Link href="/shop" className="primary pale">Shop this offer <Icon name="arrow"/></Link></div><div className="deal-countdown"><span>Ends in</span><b>02</b><i>days</i><b>14</b><i>hours</i></div></Reveal>
- <Reveal className="section shell fresh-section"><div className="section-head"><div><span className="eyebrow dot">Harvested today</span><h2>Fresh today</h2></div><p className="section-note">Harvested within 24 hours.<br/>Delivered in paper, never plastic.</p></div><ProductCarousel label="Fresh today products">{products.slice(0,8).map((p,i)=><ProductCard product={p} featured={i===0} key={p.id}/>)}</ProductCarousel></Reveal>
- {history&&<Reveal className="section shell buy-again"><div className="section-head"><div><span className="eyebrow">From your previous orders</span><h2>Buy again</h2></div></div><div className="compact-row">{products.slice(1,5).map(p=><MiniProduct key={p.id} id={p.id}/>)}</div></Reveal>}
- <Reveal className="section shell editorial"><div className="editorial-image"><img src="https://images.pexels.com/photos/36174431/pexels-photo-36174431/free-photo-of-fresh-vegetables-on-rustic-table-setting.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Fresh vegetables arranged on linen"/><span>01 / The Sunday box</span></div><div className="editorial-copy"><span className="eyebrow">Seasonal vegetable box</span><h2>Everything you need for a fresh summer salad.</h2><p>Six crisp, bright things selected by Mira from Kaveri Acres. Enough for three very generous bowls — or one excellent lunch with friends.</p><div className="collection-list">{products.filter(p=>["heirloom-tomatoes","baby-spinach","garden-cucumber"].includes(p.id)).map(p=><MiniProduct id={p.id} key={p.id}/>)}</div><Link href="/shop/seasonal" className="text-link">Shop the salad box <Icon name="arrow"/></Link></div></Reveal>
- <Reveal className="section shell recipe-section"><div className="section-head"><div><span className="eyebrow">Easy meal ideas</span><h2>Recipes for this week</h2></div><p className="section-note">Simple recipes using<br/>what farms have in abundance.</p></div><div className="recipe-grid"><article className="recipe-large"><img src="https://images.pexels.com/photos/36174431/pexels-photo-36174431/free-photo-of-fresh-vegetables-on-rustic-table-setting.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Colourful seasonal vegetable bowl"/><span>15 minutes · serves 2</span><div><small>The big green lunch</small><h3>Crunchy garden bowl with basil dressing</h3><Link href="/shop/leafy-greens">Shop the ingredients <Icon name="arrow"/></Link></div></article><article><img src="https://images.pexels.com/photos/7543101/pexels-photo-7543101.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Fresh carrots ready for roasting"/><div><small>Weeknight comfort</small><h3>Charred roots with coriander</h3></div></article><article><img src="https://images.pexels.com/photos/5701945/pexels-photo-5701945.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Peppers and pumpkin ready for soup"/><div><small>One-pot supper</small><h3>Golden pumpkin & pepper soup</h3></div></article></div></Reveal>
- <Reveal className="farm-story"><div className="farm-story-image"><img src="https://images.pexels.com/photos/9798979/pexels-photo-9798979.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A farmer placing freshly harvested vegetables into a wooden crate"/></div><div className="farm-story-copy"><span className="eyebrow light-text">Meet the farmer · 08 km away</span><h2>“Healthy soil makes vegetables you don’t need to hide.”</h2><p>Mira and her family grow our tomatoes, cucumbers and chillies on four regenerative acres outside the city. Every item in the shop names its farm, so you always know how far lunch travelled.</p><Link href="/shop" className="text-link">Shop from Kaveri Acres <Icon name="arrow"/></Link></div></Reveal>
- <Reveal className="values"><div className="shell value-grid">{[["24h","Farm to door"],["0","Unnecessary plastic"],["12km","Average food mile"],["100%","Farmer named"]].map(([n,l])=><div key={l}><strong>{n}</strong><span>{l}</span></div>)}</div></Reveal>
- <Reveal className="section shell love-notes"><div className="section-head"><div><span className="eyebrow">Customer reviews</span><h2>Rated fresh by our customers</h2></div><div className="review-score"><strong>4.9</strong><span>★★★★★<small>2,480 customer reviews</small></span></div></div><div className="review-grid">{[["The spinach arrived colder and crisper than the salad I ordered at lunch.","Rhea · Indiranagar"],["Being able to see the farm name changed how I shop. The tomatoes are extraordinary.","Dev · Koramangala"],["The basket feels considered, not warehouse-picked. Even the paper wrap is lovely.","Maya · Ulsoor"]].map(([quote,who],i)=><blockquote key={who} style={{'--delay':`${i*90}ms`} as React.CSSProperties}><span>“</span><p>{quote}</p><footer>{who}<b>Verified order</b></footer></blockquote>)}</div></Reveal>
- <Footer/></>;
+function MiniProductCard({ id }: { id: string }) {
+  const p = products.find((x) => x.id === id);
+  const { cart, add, notify } = useStore();
+  if (!p) return null;
+  const qty = cart[id]?.quantity ?? 0;
+
+  return (
+    <div className="mini-product-card">
+      <img src={p.image} alt={p.name} className="mini-p-img" />
+      <div className="mini-p-meta">
+        <strong>{p.name}</strong>
+        <span className="mini-p-sub">{p.unit} · {money(p.price)}</span>
+      </div>
+      {qty > 0 ? (
+        <QuantityStepper id={id} quantity={qty} />
+      ) : (
+        <button
+          type="button"
+          className="mini-add-btn"
+          onClick={() => {
+            add(id);
+            notify(`${p.name} added to cart`);
+          }}
+          aria-label={`Add ${p.name}`}
+        >
+          <Icon name="plus" size={15} />
+          <span>ADD</span>
+        </button>
+      )}
+    </div>
+  );
 }
 
-function MiniProduct({id}:{id:string}){const p=products.find(x=>x.id===id)!;const {cart,add,notify}=useStore();const qty=cart[id]?.quantity??0;return <div className="mini-product"><img src={p.image} alt=""/><div><strong>{p.name}</strong><small>{p.unit} · {money(p.price)}</small></div>{qty?<QuantityStepper id={id} quantity={qty}/>:<button onClick={()=>{add(id);notify(`${p.name} added to your cart`)}} aria-label={`Add ${p.name}`}><Icon name="plus"/></button>}</div>}
+export function ShopView({ category }: { category?: string }) {
+  const initialCategorySlug = category ?? "all";
+  const [selectedSlug, setSelectedSlug] = useState(initialCategorySlug);
+  const [sort, setSort] = useState("popular");
+  const [maxPrice, setMaxPrice] = useState(350);
 
-export function ShopView({category}:{category?:string}){
- const initial=category?categories.find(c=>c.slug===category)?.name:"All"; const [selected,setSelected]=useState(initial??"All"); const [organic,setOrganic]=useState(category==='organic'); const [max,setMax]=useState(250); const [sort,setSort]=useState('fresh');
- const filtered=useMemo(()=>products.filter(p=>(selected==='All'||selected==='Organic only'||p.category===selected)&&(selected!=='Organic only'||p.tags.includes('organic'))&&(!organic||p.tags.includes('organic'))&&p.price<=max).sort((a,b)=>sort==='low'?a.price-b.price:sort==='rating'?b.rating-a.rating:0),[selected,organic,max,sort]);
- return <><section className="shop-hero shell"><span className="eyebrow">Shop · {products.length} good things</span><h1>Shop fresh <em>vegetables.</em></h1><p>Choose fresh vegetables from trusted farms near Bengaluru.</p></section><div className="shop-layout shell"><aside className="filters"><div className="filter-title"><span>Filters</span><button onClick={()=>{setSelected('All');setOrganic(false);setMax(250)}}>Reset</button></div><div className="filter-group"><span>Type</span>{['All',...categories.slice(0,4).map(c=>c.name)].map(c=><button className={selected===c?'active':''} onClick={()=>setSelected(c)} key={c}><i/>{c}</button>)}</div><div className="filter-group"><span>Growing method</span><button className={`toggle-row ${organic?'active':''}`} onClick={()=>setOrganic(!organic)}>Organic only <i><b/></i></button></div><div className="filter-group"><span>Up to {money(max)}</span><input type="range" min="50" max="250" step="10" value={max} onChange={e=>setMax(+e.target.value)} aria-label="Maximum price"/></div></aside><section className="shop-results"><div className="results-bar"><span>{filtered.length} products</span><div className="mobile-chips">{['All','Leafy greens','Roots','Herbs','Exotic'].map(c=><button key={c} className={selected===c?'active':''} onClick={()=>setSelected(c)}>{c}</button>)}</div><label>Sort <select value={sort} onChange={e=>setSort(e.target.value)}><option value="fresh">Freshest first</option><option value="low">Price: low to high</option><option value="rating">Best rated</option></select></label></div>{filtered.length?<div className="product-grid">{filtered.map((p,i)=><ProductCard product={p} featured={i>0&&i%7===0} key={p.id}/>)}</div>:<Empty title="No products found" text="Remove one or more filters to see more products." href="/shop"/>}</section></div><Footer/></>;
+  const filtered = useMemo(() => {
+    return products
+      .filter((p) => {
+        // Slug filtering
+        if (selectedSlug === "all") return true;
+        if (selectedSlug === "fruits") return p.category === "Fruits" || p.tags.includes("fruits");
+        if (selectedSlug === "vegetables") return p.category !== "Fruits" || p.tags.includes("vegetables");
+        if (selectedSlug === "leafy-greens") return p.category === "Leafy greens" || p.tags.includes("leafy-greens");
+        if (selectedSlug === "roots") return p.category === "Roots" || p.tags.includes("roots");
+        if (selectedSlug === "herbs") return p.category === "Herbs" || p.tags.includes("herbs");
+        if (selectedSlug === "exotic") return p.category === "Exotic" || p.tags.includes("exotic");
+        if (selectedSlug === "seasonal") return p.category === "Seasonal" || p.tags.includes("seasonal");
+        return true;
+      })
+      .filter((p) => p.price <= maxPrice)
+      .sort((a, b) => {
+        if (sort === "low") return a.price - b.price;
+        if (sort === "high") return b.price - a.price;
+        if (sort === "rating") return b.rating - a.rating;
+        return 0;
+      });
+  }, [selectedSlug, maxPrice, sort]);
+
+  const activeCategoryMeta = categories.find((c) => c.slug === selectedSlug) ?? categories[0];
+
+  return (
+    <>
+      {/* Category Header */}
+      <section className="shop-header-banner shell">
+        <div className="shop-header-text">
+          <span className="shop-category-badge">
+            {activeCategoryMeta.icon} {activeCategoryMeta.name}
+          </span>
+          <h1>Fresh Produce Market</h1>
+          <p>{activeCategoryMeta.blurb} — {filtered.length} farm fresh items available today</p>
+        </div>
+
+        {/* Top Category Filter Selector */}
+        <div className="shop-category-tabs" role="tablist" aria-label="Product categories">
+          {categories.map((c) => (
+            <button
+              key={c.slug}
+              type="button"
+              className={`shop-tab-pill ${selectedSlug === c.slug ? "active" : ""}`}
+              onClick={() => setSelectedSlug(c.slug)}
+            >
+              <span className="shop-tab-icon">{c.icon}</span>
+              <span>{c.name}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Shop Results & Filter Bar */}
+      <section className="shell shop-content-area">
+        <div className="shop-toolbar-row">
+          <div className="results-count">
+            Showing <b>{filtered.length}</b> fresh items
+          </div>
+          <div className="toolbar-controls">
+            <div className="price-slider-quick">
+              <span>Max Price: <b>{money(maxPrice)}</b></span>
+              <input
+                type="range"
+                min="30"
+                max="350"
+                step="10"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(+e.target.value)}
+                aria-label="Filter by maximum price"
+              />
+            </div>
+            <div className="sort-select-box">
+              <label htmlFor="sort-dropdown">Sort by:</label>
+              <select
+                id="sort-dropdown"
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+              >
+                <option value="popular">Recommended</option>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+                <option value="rating">Customer Rating</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {filtered.length ? (
+          <div className="product-grid-view">
+            {filtered.map((product) => (
+              <ProductCard product={product} key={product.id} />
+            ))}
+          </div>
+        ) : (
+          <div className="no-items-state">
+            <span className="no-items-emoji">🔍</span>
+            <h3>No products found</h3>
+            <p>Try adjusting your price filter or selecting a different category.</p>
+            <button
+              type="button"
+              className="primary-btn"
+              onClick={() => {
+                setSelectedSlug("all");
+                setMaxPrice(350);
+              }}
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
+      </section>
+
+      <Footer />
+    </>
+  );
 }
 
-export function ProductView({id}:{id:string}){const p=products.find(x=>x.id===id)??products[0];const {cart,add,notify,favorites,toggleFavorite}=useStore();const qty=cart[p.id]?.quantity??0;const [open,setOpen]=useState('story');return <><section className="product-page shell"><div className="product-gallery" style={{background:p.color}}><img src={p.image} alt={p.name}/><span>{p.badge}</span>{p.offer&&<b className="detail-offer">{p.offer}</b>}<div className="gallery-note">Swipe for farm & harvest photos <span>01 / 03</span></div></div><div className="product-detail"><Link href="/shop" className="back-link">← Back to shop</Link><span className="farm-tag">From {p.farm} · {p.distance} away</span><h1>{p.name}</h1><div className="rating">★★★★★ <span>{p.rating} · 86 customer reviews</span></div><p className="product-description">{p.description}</p><div className="price-line"><strong>{money(p.price)}</strong>{p.originalPrice&&<del>{money(p.originalPrice)}</del>}<span>per {p.unit}</span>{p.offer&&<b>{p.offer}</b>}</div><div className="product-actions">{qty?<QuantityStepper id={p.id} quantity={qty}/>:<button className="primary" onClick={()=>{add(p.id);notify(`${p.name} added to your basket`)}}><Icon name="basket"/> Add to basket</button>}<button className={`save-large ${favorites.has(p.id)?'saved':''}`} onClick={()=>toggleFavorite(p.id)} aria-label="Save product"><Icon name="heart"/></button></div><div className="product-assurances"><div><b>Today, 4–6pm</b><span>Earliest delivery</span></div><div><b>Paper wrapped</b><span>Plastic-free pack</span></div><div><b>{p.distance}</b><span>Farm to you</span></div></div><p className="delivery-note"><Icon name="check" size={17}/> Order in the next 2h 18m for today’s evening round</p><div className="nutrition-chips">{(p.nutrition??['Fibre','Vitamin C','Farm fresh']).map(n=><span key={n}>{n}</span>)}</div><div className="accordions">{[['story','About this product',p.description],['storage','Storage instructions',p.storage??'Store cool and dry. Wash only before using.'],['origin','Farm and harvest details',`Harvested in a small batch at ${p.farm}, just ${p.distance} from our packing table.`]].map(([key,title,text])=><div key={key}><button onClick={()=>setOpen(open===key?'':key)}><span>{title}</span><Icon name={open===key?'minus':'plus'}/></button>{open===key&&<p>{text}</p>}</div>)}</div></div></section><section className="detail-reviews shell"><div><span className="eyebrow">Customer reviews</span><h2>What customers<br/>are saying.</h2></div><blockquote><span>★★★★★</span><p>“Sweet, deeply tomatoey and still smelling of the vine. I ate the first one over the sink.”</p><footer>Arjun K. · Verified order</footer></blockquote><blockquote><span>★★★★★</span><p>“Beautifully packed and genuinely crisp when it arrived. This is what local should feel like.”</p><footer>Naina S. · Verified order</footer></blockquote></section><section className="section shell"><div className="section-head"><div><span className="eyebrow">Recommended for you</span><h2>Frequently bought together</h2></div></div><ProductCarousel label="Products that pair well">{products.filter(x=>x.id!==p.id).slice(0,5).map(x=><ProductCard product={x} key={x.id}/>)}</ProductCarousel></section><Footer/></>}
+export function ProductView({ id }: { id: string }) {
+  const p = products.find((x) => x.id === id) ?? products[0];
+  const { cart, add, setQty, favorites, toggleFavorite, notify } = useStore();
+  const qty = cart[p.id]?.quantity ?? 0;
 
-export function CartView(){const {cart}=useStore();const {subtotal}=useCartTotals();const lines=Object.entries(cart);return <><section className="inner-head shell"><span className="eyebrow">Review your items</span><h1>Your <em>cart.</em></h1></section><div className="cart-page shell">{lines.length?<><div className="cart-page-lines">{lines.map(([id,l])=>{const p=products.find(x=>x.id===id)!;return <div className="cart-page-line" key={id}><img src={p.image} alt=""/><div><span className="farm-tag">{p.farm}</span><h3>{p.name}</h3><p>{money(p.price)} / {p.unit}</p></div><QuantityStepper id={id} quantity={l.quantity}/><strong>{money(p.price*l.quantity)}</strong></div>})}</div><OrderTotal subtotal={subtotal}/></>:<Empty title="Your cart is empty" text="Browse fresh vegetables and add them to your cart." href="/shop"/>}</div><Footer/></>}
-function OrderTotal({subtotal}:{subtotal:number}){return <aside className="order-total"><span className="eyebrow">Order summary</span><div><span>Items</span><b>{money(subtotal)}</b></div><div><span>Delivery</span><b>{subtotal>=499?'On us':'₹49'}</b></div><div className="grand"><span>Total</span><strong>{money(subtotal+(subtotal>=499?0:49))}</strong></div><p>Free delivery is our thank-you above ₹499.</p><Link className="primary wide" href="/checkout">Proceed to checkout <Icon name="arrow"/></Link></aside>}
+  const related = useMemo(
+    () => products.filter((x) => x.id !== p.id && (x.category === p.category || x.tags.some((t) => p.tags.includes(t)))).slice(0, 4),
+    [p]
+  );
 
-export function CheckoutView(){const {cart,placeOrder,notify}=useStore();const {subtotal}=useCartTotals();const router=useRouter();const [address,setAddress]=useState('home');const [slot,setSlot]=useState('Today · 4–6pm');const [payment,setPayment]=useState('upi');const [coupon,setCoupon]=useState('');const [discount,setDiscount]=useState(0);const [loading,setLoading]=useState(false);const selectedAddress=addresses.find(a=>a.id===address)!;const delivery=subtotal>=499?0:49;const total=Math.max(0,subtotal+delivery-discount);const applyCoupon=()=>{const match=promoCodes.find(p=>p.code===coupon.trim().toUpperCase());if(!match||subtotal<match.min){notify('Add more items to use this coupon');return}const value=match.flat??Math.round(subtotal*(match.percent??0)/100);setDiscount(value);notify(`${match.code} applied — you saved ${money(value)}`)};const submit=async()=>{if(!Object.keys(cart).length)return router.push('/shop');setLoading(true);const id=await placeOrder({address:selectedAddress.text,slot,payment});setTimeout(()=>router.push(`/order-confirmed/${id}`),350)};return <><section className="checkout shell"><div className="checkout-main"><Link href="/cart" className="back-link">← Back to cart</Link><span className="eyebrow">Demo checkout · no real payment</span><h1>Complete your <em>order.</em></h1><CheckoutSection n="01" title="Delivery address"><div className="option-grid">{addresses.map(a=><button key={a.id} className={`option-card ${address===a.id?'active':''}`} onClick={()=>setAddress(a.id)}><span><b>{a.label}</b>{a.text}<small>Leave at the door · Asha, +91 •••• 3210</small></span>{address===a.id&&<Icon name="check"/>}</button>)}</div><button className="add-address">+ Add a new address</button></CheckoutSection><CheckoutSection n="02" title="Choose a delivery time"><div className="day-tabs"><button className="active"><b>Today</b><span>13 Sep</span></button><button><b>Tomorrow</b><span>14 Sep</span></button><button><b>Tuesday</b><span>15 Sep</span></button></div><div className="slot-row">{['Today · 4–6pm','Today · 7–9pm','Tomorrow · 8–10am','Tomorrow · 10–12pm'].map(s=><button className={slot===s?'active':''} key={s} onClick={()=>setSlot(s)}><span className="slot-dot"/>{s}<small>{s.includes('4–6')?'Fastest':''}</small></button>)}</div><p className="slot-note">Your produce stays with the farm until its delivery round begins.</p></CheckoutSection><CheckoutSection n="03" title="Choose a payment method"><div className="option-grid payment">{[['upi','UPI','Google Pay, PhonePe or any UPI app'],['card','Credit / debit card','Visa, Mastercard or RuPay'],['netbanking','Net banking','All major Indian banks'],['cod','Pay at the door','Cash or UPI on delivery']].map(([id,label,meta])=><button key={id} className={`option-card pay-option ${payment===id?'active':''}`} onClick={()=>setPayment(id)}><i className={`pay-icon ${id}`}>{id==='upi'?'UPI':id==='card'?'••••':id==='netbanking'?'BANK':'₹'}</i><span><b>{label}</b>{meta}</span>{payment===id&&<Icon name="check"/>}</button>)}</div>{payment==='upi'&&<div className="payment-fields"><label>UPI ID<input defaultValue="asha@okbank" aria-label="UPI ID"/></label><button>Verify</button></div>}{payment==='card'&&<div className="card-fields"><label>Card number<input defaultValue="4242 4242 4242 4242" aria-label="Card number"/></label><label>Expiry<input defaultValue="12 / 29" aria-label="Expiry"/></label><label>CVV<input defaultValue="•••" aria-label="CVV"/></label><small>Demo only — details are never sent or saved.</small></div>}<div className="secure-note">⌁ 256-bit checkout styling · Mock payment, no charge</div></CheckoutSection><CheckoutSection n="04" title="Apply a coupon"><div className="coupon-box"><input placeholder="Offer code" value={coupon} onChange={e=>setCoupon(e.target.value)} aria-label="Offer code"/><button onClick={applyCoupon}>Apply</button></div><div className="available-offers">{promoCodes.map(p=><button key={p.code} className={coupon===p.code?'selected':''} onClick={()=>setCoupon(p.code)}><b>{p.code}</b><span>{p.label}</span><i>{coupon===p.code?'Selected':'Tap to use'}</i></button>)}</div></CheckoutSection></div><aside className="checkout-summary"><div className="delivery-preview"><span className="eyebrow">Delivering to {selectedAddress.label}</span><strong>{slot}</strong><p>{selectedAddress.text}</p><div><span>●</span><b>Farm pickup</b><i>3:25pm</i></div><div><span>○</span><b>Your doorstep</b><i>by 6:00pm</i></div></div><div className="checkout-total"><div><span>Items</span><b>{money(subtotal)}</b></div><div><span>Delivery</span><b>{delivery?money(delivery):'On us'}</b></div>{discount>0&&<div className="discount-line"><span>Coupon discount</span><b>−{money(discount)}</b></div>}<div className="grand"><span>Total</span><strong>{money(total)}</strong></div></div><button className={`place-order ${loading?'loading':''}`} onClick={submit} disabled={loading}>{loading?<span className="leaf-loader">♧</span>:<>{payment==='cod'?'Place order':`Pay ${money(total)} securely`}</>}</button><small>Demo checkout — no payment will be taken.</small></aside></section></>}
-function CheckoutSection({n,title,children}:{n:string;title:string;children:React.ReactNode}){return <section className="checkout-step"><div className="step-heading"><span>{n}</span><h2>{title}</h2></div>{children}</section>}
+  return (
+    <>
+      <section className="product-detail-page shell">
+        <Link href="/shop" className="back-nav-btn">
+          ← Back to Shop
+        </Link>
 
-export function ConfirmationView({id}:{id:string}){const {activeOrder}=useStore();const order=activeOrder?.id===id?activeOrder:null;return <section className="confirmation"><div className="leaf-particles">{Array.from({length:14}).map((_,i)=><i key={i} style={{'--i':i} as React.CSSProperties}>◆</i>)}</div><div className="success-mark"><Icon name="check" size={42}/></div><span className="eyebrow">Order {id} confirmed</span><h1>Your order is<br/><em>confirmed.</em></h1><p>Your vegetables will be delivered during <strong>{order?.slot??'today, 4–6pm'}</strong>.</p><div className="confirmation-card"><div><span>Delivering to</span><b>{order?.address??addresses[0].text}</b></div><div><span>Payment</span><b>{order?.payment==='card'?'Card ending 4242':order?.payment==='upi'?'UPI · asha@okbank':order?.payment==='netbanking'?'Net banking':'Pay at the door'}</b></div><div><span>Live ETA</span><b>1 hr 42 min</b></div></div><Link href={`/orders/${id}/track`} className="primary">Track your order <Icon name="arrow"/></Link><Link href="/" className="text-link">Continue shopping</Link></section>}
+        <div className="product-detail-grid">
+          {/* Product Big Photo */}
+          <div className="product-detail-gallery">
+            <div className="detail-img-container">
+              <img src={p.image} alt={p.name} />
+              {p.offer && <span className="detail-offer-tag">{p.offer}</span>}
+              <span className="detail-fresh-tag">{p.badge}</span>
+            </div>
+          </div>
 
-export function TrackingView({id}:{id:string}){const {activeOrder,advanceOrder}=useStore();const isCurrent=activeOrder?.id===id;const stage=isCurrent?activeOrder.stage:1;const stages=['Order placed','Being packed','Out for delivery','Delivered'];useEffect(()=>{if(!isCurrent||stage>=3)return;const t=setTimeout(advanceOrder,8000);return()=>clearTimeout(t)},[stage,isCurrent,advanceOrder]);const copy=['We’ve sent your list to the farm.','Your vegetables are being hand-picked.','Your order is on the way to you.','Delivered — time to eat well.'][stage];const eta=['1 hr 52 min','1 hr 24 min','28 min','Arrived'][stage];return <section className="tracking shell"><div className="tracking-head"><span className="eyebrow">Order tracking · {id}</span><h1>{copy}</h1><p>Expected {activeOrder?.slot??'today, 4–6pm'} · Tracking updates automatically in this demo.</p></div><div className="tracking-layout"><div className="tracker-card"><div className="tracker-steps">{stages.map((s,i)=><div className={i<=stage?'done':''} key={s}><i>{i<stage?<Icon name="check"/>:i+1}</i><span>{s}</span><small>{['2:08pm','2:32pm','3:48pm','By 6pm'][i]}</small></div>)}</div><div className="route-visual"><svg viewBox="0 0 900 260" preserveAspectRatio="none"><path className="route-bg" d="M30 210 C180 20 320 245 470 115 S720 20 870 80"/><path className="route-progress" style={{strokeDashoffset:900-(stage/3)*900}} d="M30 210 C180 20 320 245 470 115 S720 20 870 80"/></svg><div className="farm-pin">♧<span>Kaveri Acres</span></div><div className="home-pin">⌂<span>Your doorstep</span></div><div className="bike" style={{left:`${8+stage*28}%`}}>▰</div></div></div><aside className="tracking-aside"><div className="eta-card"><span>Estimated arrival</span><strong>{eta}</strong><p>{stage<2?'Your vegetables are being packed at the farm.':'Your delivery partner is bringing your order in an insulated bag.'}</p></div><div className="courier-card"><div>RK</div><span><b>Ravi Kumar</b><small>Your delivery partner · ★ 4.9</small></span><button aria-label="Call delivery partner">☎</button></div><div className="address-route"><span className="eyebrow">Delivery address</span><p>{activeOrder?.address??addresses[0].text}</p><button>Share delivery instructions</button></div><div className="help-card"><b>Need help with this order?</b><p>Chat support replies in under 2 minutes.</p><button>Start chat</button></div></aside></div><Link href="/orders" className="text-link">See all orders <Icon name="arrow"/></Link></section>}
+          {/* Product Details & Actions */}
+          <div className="product-detail-main">
+            <div className="detail-farm-chip">
+              <Icon name="pin" size={15} />
+              <span>Grown at {p.farm} · {p.distance} away</span>
+            </div>
 
-export function FavoritesView(){const {favorites}=useStore();const saved=products.filter(p=>favorites.has(p.id));return <><section className="inner-head shell"><span className="eyebrow">Your saved products</span><h1>Your <em>favorites.</em></h1></section><section className="section shell">{saved.length?<div className="product-grid">{saved.map(p=><ProductCard product={p} key={p.id}/>)}</div>:<Empty title="No favorites yet" text="Tap the heart on a product to save it here." href="/shop"/>}</section><Footer/></>}
-export function OrdersView(){const {activeOrder}=useStore();const labels=['Order confirmed','Being packed','Out for delivery','Delivered'];return <section className="orders-page shell"><div className="inner-head"><span className="eyebrow">My orders</span><h1>Current and past <em>orders.</em></h1><p>Receipts, delivery details and every step from the farm to your door.</p></div>{activeOrder&&<article className="active-order-card"><div className="active-order-top"><div><span className="live-chip"><i/> Active order</span><h2>{labels[activeOrder.stage]}</h2><p>{activeOrder.slot} · ETA {activeOrder.stage<2?'1 hr 24 min':activeOrder.stage===2?'28 min':'Delivered'}</p></div><div className="active-order-actions"><Link href={`/order-confirmed/${activeOrder.id}`}>View confirmation</Link><Link href={`/orders/${activeOrder.id}/track`} className="primary">Track live <Icon name="arrow"/></Link></div></div><div className="order-progress">{labels.map((label,i)=><div className={i<=activeOrder.stage?'done':''} key={label}><span>{i<activeOrder.stage?<Icon name="check" size={15}/>:i+1}</span><b>{label}</b></div>)}</div><footer><span>Order {activeOrder.id}</span><span>Delivering to {activeOrder.address}</span><b>{activeOrder.payment==='cod'?'Pay at door':'Paid online'}</b></footer></article>}<div className="orders-subhead"><div><span className="eyebrow">Past orders</span><h2>Order history</h2></div><button>Past 6 months⌄</button></div><div className="order-list">{pastOrders.map(o=><article key={o.id}><div><span className="eyebrow">Delivered · {o.date} · Order {o.id}</span><h2>{o.items.map(id=>products.find(p=>p.id===id)?.name).join(', ')}</h2><p>Delivered on time · Paid online</p></div><div className="order-thumbs">{o.items.map(id=><img src={products.find(p=>p.id===id)?.image} alt="" key={id}/>)}</div><strong>{money(o.total)}</strong><div className="history-actions"><Link href={`/orders/${o.id}/track`}>View details</Link><button>Buy again</button></div></article>)}</div></section>}
-export function AccountView(){const [editing,setEditing]=useState(false);return <section className="account-page shell"><div className="inner-head"><span className="eyebrow">Good morning, Asha</span><h1>Your <em>account.</em></h1></div><div className="account-grid"><article className="profile-card"><div className="avatar">A</div><div><h2>Asha Mehta</h2><p>asha@example.com · +91 98765 43210</p></div><button onClick={()=>setEditing(!editing)}>{editing?'Done':'Edit profile'}</button>{editing&&<div className="edit-fields"><input defaultValue="Asha Mehta"/><input defaultValue="asha@example.com"/></div>}</article><article className="address-book"><div className="section-head"><h2>Your addresses</h2><button>+ Add new</button></div>{addresses.map(a=><div key={a.id}><strong>{a.label}</strong><span>{a.text}</span></div>)}</article><Link className="account-tile" href="/orders"><span>02</span><h3>Past orders</h3><p>View your previous orders and buy items again.</p><Icon name="arrow"/></Link><Link className="account-tile warm" href="/favorites"><span>01</span><h3>Saved products</h3><p>Products you saved for later.</p><Icon name="arrow"/></Link></div></section>}
+            <h1 className="detail-title">{p.name}</h1>
+            <p className="detail-unit-badge">{p.unit}</p>
 
-function Empty({title,text,href}:{title:string;text:string;href:string}){return <div className="empty-state"><div>♧</div><h2>{title}</h2><p>{text}</p><Link href={href} className="primary">Start shopping</Link></div>}
+            <div className="detail-rating-row">
+              <span className="rating-stars">★★★★★</span>
+              <strong>{p.rating}</strong>
+              <small>(120+ verified customer ratings)</small>
+            </div>
+
+            <div className="detail-price-box">
+              <span className="detail-price">{money(p.price)}</span>
+              {p.originalPrice && (
+                <del className="detail-strike-price">{money(p.originalPrice)}</del>
+              )}
+              {p.offer && <span className="detail-savings-badge">{p.offer}</span>}
+            </div>
+
+            <p className="detail-description">{p.description}</p>
+
+            {/* Prominent Add to Basket action */}
+            <div className="detail-action-container">
+              {qty === 0 ? (
+                <button
+                  type="button"
+                  className="detail-add-cart-btn"
+                  onClick={() => {
+                    add(p.id);
+                    notify(`${p.name} added to cart`);
+                  }}
+                >
+                  <Icon name="plus" size={20} />
+                  <span>ADD TO BASKET</span>
+                </button>
+              ) : (
+                <div className="detail-stepper-large">
+                  <button
+                    type="button"
+                    onClick={() => setQty(p.id, qty - 1)}
+                    aria-label="Decrease quantity"
+                  >
+                    <Icon name="minus" size={18} />
+                  </button>
+                  <span>{qty}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQty(p.id, qty + 1)}
+                    aria-label="Increase quantity"
+                  >
+                    <Icon name="plus" size={18} />
+                  </button>
+                </div>
+              )}
+
+              <button
+                type="button"
+                className={`detail-fav-btn ${favorites.has(p.id) ? "saved" : ""}`}
+                onClick={() => toggleFavorite(p.id)}
+                aria-label="Save to favorites"
+              >
+                <Icon name="heart" size={22} />
+              </button>
+            </div>
+
+            {/* Key Visual Guarantees */}
+            <div className="detail-guarantees">
+              <div className="guarantee-item">
+                <Icon name="truck" size={18} />
+                <div>
+                  <strong>15 Mins Delivery</strong>
+                  <small>Fresh from nearest hub</small>
+                </div>
+              </div>
+              <div className="guarantee-item">
+                <Icon name="leaf" size={18} />
+                <div>
+                  <strong>100% Chemical-Free</strong>
+                  <small>Naturally grown produce</small>
+                </div>
+              </div>
+              <div className="guarantee-item">
+                <Icon name="cash" size={18} />
+                <div>
+                  <strong>Cash on Delivery</strong>
+                  <small>Pay after checking quality</small>
+                </div>
+              </div>
+            </div>
+
+            {/* Storage and Nutrition Information */}
+            <div className="detail-info-cards">
+              {p.storage && (
+                <div className="info-card">
+                  <strong>💡 Storage Advice</strong>
+                  <p>{p.storage}</p>
+                </div>
+              )}
+              {p.nutrition && (
+                <div className="info-card">
+                  <strong>🥗 Key Nutrients</strong>
+                  <div className="nutrition-pills">
+                    {p.nutrition.map((item) => (
+                      <span key={item} className="nutrient-pill">{item}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* You May Also Like */}
+        {related.length > 0 && (
+          <div className="related-products-section">
+            <h2 className="section-heading">You May Also Like</h2>
+            <div className="products-horizontal-grid">
+              {related.map((item) => (
+                <ProductCard product={item} key={item.id} />
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+      <Footer />
+    </>
+  );
+}
+
+export function CartView() {
+  const { cart, setQty } = useStore();
+  const { count, subtotal } = useCartTotals();
+  const router = useRouter();
+
+  const lines = Object.entries(cart)
+    .map(([id, line]) => ({ product: products.find((p) => p.id === id)!, quantity: line.quantity, addedAt: line.addedAt }))
+    .filter((x) => Boolean(x.product));
+
+  const freeDeliveryThreshold = 299;
+  const isFreeDelivery = subtotal >= freeDeliveryThreshold;
+
+  return (
+    <>
+      <section className="cart-page-layout shell">
+        <div className="cart-page-header">
+          <h1>My Shopping Basket 🧺</h1>
+          <p>{count} {count === 1 ? "item" : "items"} selected</p>
+        </div>
+
+        {lines.length ? (
+          <div className="cart-split-grid">
+            <div className="cart-items-card">
+              {lines.map(({ product, quantity }) => (
+                <div className="cart-item-row" key={product.id}>
+                  <img src={product.image} alt={product.name} className="cart-row-img" />
+                  <div className="cart-row-info">
+                    <h3>{product.name}</h3>
+                    <span className="cart-row-unit">{product.unit}</span>
+                    <span className="cart-row-unit-price">{money(product.price)} each</span>
+                  </div>
+                  <div className="cart-row-stepper">
+                    <div className="stepper-mini">
+                      <button
+                        type="button"
+                        onClick={() => setQty(product.id, quantity - 1)}
+                        aria-label="Decrease"
+                      >
+                        <Icon name="minus" size={14} />
+                      </button>
+                      <span>{quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQty(product.id, quantity + 1)}
+                        aria-label="Increase"
+                      >
+                        <Icon name="plus" size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  <strong className="cart-row-subtotal">
+                    {money(product.price * quantity)}
+                  </strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="cart-bill-card">
+              <h3>Bill Summary</h3>
+              <div className="bill-row">
+                <span>Items Subtotal</span>
+                <strong>{money(subtotal)}</strong>
+              </div>
+              <div className="bill-row">
+                <span>Delivery Charge</span>
+                <span>{isFreeDelivery ? <b className="free-text">FREE</b> : "₹29"}</span>
+              </div>
+              <div className="bill-row bill-grand-total">
+                <span>Grand Total</span>
+                <strong>{money(subtotal + (isFreeDelivery ? 0 : 29))}</strong>
+              </div>
+
+              <button
+                type="button"
+                className="checkout-btn-full"
+                onClick={() => router.push("/checkout")}
+              >
+                <span>Proceed to Checkout</span>
+                <Icon name="arrow" size={18} />
+              </button>
+
+              <p className="delivery-time-note">
+                <Icon name="clock" size={14} /> Delivering within 15 mins to Indiranagar
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="empty-cart-view">
+            <span className="empty-emoji">🧺</span>
+            <h2>Your basket is completely empty</h2>
+            <p>Explore fresh fruits and vegetables to add to your bag.</p>
+            <Link href="/shop" className="primary-btn">
+              Start Shopping
+            </Link>
+          </div>
+        )}
+      </section>
+      <Footer />
+    </>
+  );
+}
+
+export function CheckoutView() {
+  const { cart, placeOrder, notify } = useStore();
+  const { subtotal } = useCartTotals();
+  const router = useRouter();
+
+  const [address, setAddress] = useState("home");
+  const [slot, setSlot] = useState("15 Mins · Express Delivery");
+  const [payment, setPayment] = useState("cod"); // Default to Cash on Delivery (easiest for low-literacy users)
+  const [coupon, setCoupon] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const selectedAddress = addresses.find((a) => a.id === address) ?? addresses[0];
+  const delivery = subtotal >= 299 ? 0 : 29;
+  const total = Math.max(0, subtotal + delivery - discount);
+
+  const applyCoupon = () => {
+    const match = promoCodes.find((p) => p.code === coupon.trim().toUpperCase());
+    if (!match || subtotal < match.min) {
+      notify(`Add items worth ${money(match?.min ?? 299)} to use this coupon`);
+      return;
+    }
+    const value = match.flat ?? Math.round((subtotal * (match.percent ?? 0)) / 100);
+    setDiscount(value);
+    notify(`Coupon ${match.code} applied! You saved ${money(value)}`);
+  };
+
+  const submitOrder = async () => {
+    if (!Object.keys(cart).length) {
+      router.push("/shop");
+      return;
+    }
+    setLoading(true);
+    const id = await placeOrder({
+      address: selectedAddress.text,
+      slot,
+      payment,
+    });
+    setTimeout(() => router.push(`/order-confirmed/${id}`), 400);
+  };
+
+  return (
+    <>
+      <section className="checkout-page-layout shell">
+        <Link href="/cart" className="back-nav-btn">
+          ← Back to Basket
+        </Link>
+
+        <div className="checkout-split-grid">
+          <div className="checkout-steps-col">
+            <h1 className="checkout-title">Checkout & Place Order</h1>
+
+            {/* Step 1: Delivery Address */}
+            <div className="checkout-step-box">
+              <div className="step-header">
+                <span className="step-num-badge">1</span>
+                <h2>Select Delivery Address</h2>
+              </div>
+              <div className="address-options-grid">
+                {addresses.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    className={`address-card-btn ${address === a.id ? "selected" : ""}`}
+                    onClick={() => setAddress(a.id)}
+                  >
+                    <div className="addr-top-row">
+                      <span className="addr-icon"><Icon name="home" size={16} /></span>
+                      <strong>{a.label}</strong>
+                      {address === a.id && <span className="checked-indicator"><Icon name="check" size={14} /></span>}
+                    </div>
+                    <p className="addr-text">{a.text}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 2: Delivery Timing */}
+            <div className="checkout-step-box">
+              <div className="step-header">
+                <span className="step-num-badge">2</span>
+                <h2>Choose Delivery Time</h2>
+              </div>
+              <div className="timing-options-row">
+                {[
+                  "15 Mins · Express Delivery",
+                  "Today · 4:00 PM – 6:00 PM",
+                  "Today · 7:00 PM – 9:00 PM",
+                  "Tomorrow Morning · 7:00 AM – 9:00 AM",
+                ].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`timing-pill-btn ${slot === s ? "selected" : ""}`}
+                    onClick={() => setSlot(s)}
+                  >
+                    <span className="time-dot" />
+                    <span>{s}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 3: Payment Method (Visual-First with Clear Icons) */}
+            <div className="checkout-step-box">
+              <div className="step-header">
+                <span className="step-num-badge">3</span>
+                <h2>Choose Payment Option</h2>
+              </div>
+              <div className="payment-options-grid">
+                {[
+                  {
+                    id: "cod",
+                    icon: "💵",
+                    title: "Cash on Delivery",
+                    subtitle: "Pay cash or UPI at your door upon receiving",
+                  },
+                  {
+                    id: "upi",
+                    icon: "📱",
+                    title: "UPI (Google Pay, PhonePe, Paytm)",
+                    subtitle: "Instant payment via any UPI app",
+                  },
+                  {
+                    id: "card",
+                    icon: "💳",
+                    title: "Credit / Debit Card",
+                    subtitle: "Visa, Mastercard, RuPay cards accepted",
+                  },
+                  {
+                    id: "netbanking",
+                    icon: "🏦",
+                    title: "Net Banking",
+                    subtitle: "All major Indian banks supported",
+                  },
+                ].map((pm) => (
+                  <button
+                    key={pm.id}
+                    type="button"
+                    className={`payment-method-card ${payment === pm.id ? "selected" : ""}`}
+                    onClick={() => setPayment(pm.id)}
+                  >
+                    <span className="pm-icon">{pm.icon}</span>
+                    <div className="pm-meta">
+                      <strong>{pm.title}</strong>
+                      <small>{pm.subtitle}</small>
+                    </div>
+                    {payment === pm.id && (
+                      <span className="checked-indicator">
+                        <Icon name="check" size={14} />
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 4: Promo Coupons */}
+            <div className="checkout-step-box">
+              <div className="step-header">
+                <span className="step-num-badge">4</span>
+                <h2>Apply Discount Coupon</h2>
+              </div>
+              <div className="coupon-input-group">
+                <input
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value)}
+                  placeholder="Enter coupon code (e.g. FIRSTLEAF)"
+                  aria-label="Coupon code input"
+                />
+                <button type="button" onClick={applyCoupon} className="apply-btn">
+                  Apply
+                </button>
+              </div>
+              <div className="quick-coupons-list">
+                {promoCodes.map((p) => (
+                  <button
+                    key={p.code}
+                    type="button"
+                    className="coupon-tag-btn"
+                    onClick={() => setCoupon(p.code)}
+                  >
+                    <b>{p.code}</b> — {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Checkout Right Summary */}
+          <div className="checkout-sidebar-col">
+            <div className="order-summary-card">
+              <h3>Order Summary</h3>
+              <div className="summary-line">
+                <span>Items Subtotal</span>
+                <strong>{money(subtotal)}</strong>
+              </div>
+              <div className="summary-line">
+                <span>Delivery Fee</span>
+                <span>{delivery === 0 ? <b className="free-text">FREE</b> : money(delivery)}</span>
+              </div>
+              {discount > 0 && (
+                <div className="summary-line discount-highlight">
+                  <span>Coupon Discount</span>
+                  <strong>−{money(discount)}</strong>
+                </div>
+              )}
+              <div className="summary-line grand-total-line">
+                <span>Final Total</span>
+                <strong>{money(total)}</strong>
+              </div>
+
+              <div className="delivery-recap">
+                <div className="recap-row">
+                  <Icon name="pin" size={16} />
+                  <span>Delivering to <b>{selectedAddress.label}</b></span>
+                </div>
+                <div className="recap-row">
+                  <Icon name="clock" size={16} />
+                  <span>Timing: <b>{slot}</b></span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="place-order-big-btn"
+                onClick={submitOrder}
+                disabled={loading}
+              >
+                {loading ? (
+                  <span>Placing Order...</span>
+                ) : (
+                  <>
+                    <span>Place Order · {money(total)}</span>
+                    <Icon name="arrow" size={18} />
+                  </>
+                )}
+              </button>
+
+              <small className="safe-checkout-note">
+                🔒 Safe & encrypted checkout · Pay with confidence
+              </small>
+            </div>
+          </div>
+        </div>
+      </section>
+      <Footer />
+    </>
+  );
+}
+
+export function ConfirmationView({ id }: { id: string }) {
+  const { activeOrder } = useStore();
+  const order = activeOrder?.id === id ? activeOrder : null;
+
+  return (
+    <section className="confirmation-page shell">
+      <div className="confirmation-box">
+        <div className="conf-icon-circle">
+          <Icon name="check" size={40} />
+        </div>
+        <span className="conf-order-id">Order ID: #{id}</span>
+        <h1>Your Order Is Confirmed! 🎉</h1>
+        <p className="conf-subtext">
+          Fresh fruits & vegetables are being packed at the nearby farm hub and will be delivered during{" "}
+          <strong>{order?.slot ?? "in 15 mins"}</strong>.
+        </p>
+
+        <div className="order-details-card">
+          <div className="detail-field">
+            <span>Delivering To</span>
+            <strong>{order?.address ?? addresses[0].text}</strong>
+          </div>
+          <div className="detail-field">
+            <span>Payment Mode</span>
+            <strong>
+              {order?.payment === "cod"
+                ? "💵 Cash / UPI on Delivery"
+                : order?.payment === "upi"
+                ? "📱 UPI Paid Online"
+                : "💳 Card Payment"}
+            </strong>
+          </div>
+          <div className="detail-field">
+            <span>Estimated Delivery</span>
+            <strong className="green-text">⚡ 15 Minutes</strong>
+          </div>
+        </div>
+
+        <div className="conf-cta-group">
+          <Link href={`/orders/${id}/track`} className="primary-btn">
+            Track Live Delivery 🛵
+          </Link>
+          <Link href="/" className="secondary-btn">
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function TrackingView({ id }: { id: string }) {
+  const { activeOrder, advanceOrder } = useStore();
+  const isCurrent = activeOrder?.id === id;
+  const stage = isCurrent ? activeOrder.stage : 1;
+  const stages = ["Order Confirmed", "Being Packed", "Out For Delivery", "Delivered"];
+
+  return (
+    <section className="tracking-page shell">
+      <div className="tracking-card-main">
+        <div className="tracking-header">
+          <span className="track-id-badge">Live Tracking · Order #{id}</span>
+          <h1>Your Harvest Is On The Way! 🛵</h1>
+          <p>Expected Delivery: {activeOrder?.slot ?? "Within 15 minutes"}</p>
+        </div>
+
+        {/* Step progress bar */}
+        <div className="tracking-progress-steps">
+          {stages.map((st, i) => (
+            <div className={`track-step-node ${i <= stage ? "completed" : ""}`} key={st}>
+              <div className="step-circle">
+                {i < stage ? <Icon name="check" size={16} /> : i + 1}
+              </div>
+              <span className="step-title">{st}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="tracking-rider-card">
+          <div className="rider-avatar">🛵</div>
+          <div className="rider-meta">
+            <strong>Ramesh Kumar</strong>
+            <small>Delivery Partner · ★ 4.9 Rating</small>
+          </div>
+          <button
+            type="button"
+            className="call-rider-btn"
+            onClick={advanceOrder}
+            title="Advance demo stage"
+          >
+            Advance Stage ⚡
+          </button>
+        </div>
+
+        <div className="tracking-bottom-actions">
+          <Link href="/orders" className="view-orders-btn">
+            View All Orders
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function FavoritesView() {
+  const { favorites } = useStore();
+  const saved = products.filter((p) => favorites.has(p.id));
+
+  return (
+    <>
+      <section className="favorites-page shell">
+        <div className="page-header-simple">
+          <h1>Saved Items ❤️</h1>
+          <p>{saved.length} {saved.length === 1 ? "item" : "items"} saved in your wishlist</p>
+        </div>
+
+        {saved.length ? (
+          <div className="product-grid-view">
+            {saved.map((product) => (
+              <ProductCard product={product} key={product.id} />
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state-view">
+            <span className="empty-emoji">❤️</span>
+            <h2>No saved items yet</h2>
+            <p>Tap the heart icon on any fruit or vegetable to save it for later.</p>
+            <Link href="/shop" className="primary-btn">
+              Explore Products
+            </Link>
+          </div>
+        )}
+      </section>
+      <Footer />
+    </>
+  );
+}
+
+export function OrdersView() {
+  const { activeOrder } = useStore();
+  const stageLabels = ["Order Confirmed", "Being Packed", "Out For Delivery", "Delivered"];
+
+  return (
+    <section className="orders-page-layout shell">
+      <div className="page-header-simple">
+        <h1>My Orders 📦</h1>
+        <p>Track live deliveries and view previous orders</p>
+      </div>
+
+      {activeOrder && (
+        <div className="active-order-highlight">
+          <div className="active-order-header">
+            <span className="live-status-pill">
+              <span className="pulse-dot" /> LIVE ORDER #{activeOrder.id}
+            </span>
+            <h3>{stageLabels[activeOrder.stage]}</h3>
+            <p>Slot: {activeOrder.slot} · ETA: 15 Mins</p>
+          </div>
+          <Link href={`/orders/${activeOrder.id}/track`} className="primary-btn">
+            Track Delivery 🛵
+          </Link>
+        </div>
+      )}
+
+      <div className="past-orders-section">
+        <h2>Order History</h2>
+        <div className="past-orders-list">
+          {pastOrders.map((o) => (
+            <div key={o.id} className="past-order-row">
+              <div className="order-col-info">
+                <span className="order-tag-label">Order #{o.id} · {o.date}</span>
+                <h4>
+                  {o.items
+                    .map((id) => products.find((p) => p.id === id)?.name)
+                    .filter(Boolean)
+                    .join(", ")}
+                </h4>
+                <p>Status: Delivered · 100% Quality Guaranteed</p>
+              </div>
+              <div className="order-col-price">
+                <strong>{money(o.total)}</strong>
+                <Link href="/shop" className="reorder-btn">
+                  Reorder
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function AccountView() {
+  return (
+    <section className="account-page-layout shell">
+      <div className="page-header-simple">
+        <h1>My Profile 👤</h1>
+        <p>Manage your delivery addresses and preferences</p>
+      </div>
+
+      <div className="account-card-box">
+        <div className="user-profile-header">
+          <div className="user-avatar-circle">A</div>
+          <div>
+            <h2>Asha Mehta</h2>
+            <p>asha@example.com · +91 98765 43210</p>
+          </div>
+        </div>
+
+        <div className="user-addresses-list">
+          <h3>Saved Addresses</h3>
+          {addresses.map((a) => (
+            <div key={a.id} className="saved-addr-row">
+              <strong>{a.label}</strong>
+              <p>{a.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="account-links-row">
+          <Link href="/orders" className="account-nav-tile">
+            <span>📦</span>
+            <div>
+              <strong>Order History</strong>
+              <small>View past invoices</small>
+            </div>
+          </Link>
+          <Link href="/favorites" className="account-nav-tile">
+            <span>❤️</span>
+            <div>
+              <strong>Saved Items</strong>
+              <small>Your favorite produce</small>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
